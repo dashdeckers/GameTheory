@@ -1,4 +1,5 @@
 from agent import GTAgent
+from reporter_funcs import all_c_score, all_d_score, tft_score
 
 from mesa import Model
 from mesa.time import RandomActivation
@@ -14,7 +15,7 @@ class GTModel(Model):
 
         # List of possible strategies
         self.strategies = strategies
-        # Payoff matrix in the form (my_move, their_move) : my_reward
+        # Payoff matrix in the form (my_move, op_move) : my_reward
         self.payoff = {
             ('C', 'C'): 3,
             ('C', 'D'): 0,
@@ -33,14 +34,19 @@ class GTModel(Model):
 
         # Collect data
         self.datacollector = DataCollector(
-            # we want the score of each agent, sorted by the agents strategy
-            # average score? look this up
-            # actually it would be enough just to know how many ALLC vs ALLD
-            model_reporters={"Not Implemented": lambda x: 1}
+            # TODO: When reproduction is implemented, switch to a population
+            # count of each strategy instead of total score per strategy
+            model_reporters={"ALLC": all_c_score,
+                             "ALLD": all_d_score,
+                             "TFT": tft_score}
         )
 
     def step(self):
+        for agent in self.schedule.agents:
+            agent.acted = False
+
         self.datacollector.collect(self)
         self.schedule.step()
-        # evaluate fitness and place agents again?
-        # agents with a higher score should "reproduce" more often right?
+
+        # TODO: Evaluate fitness of each agent and have agents with a high
+        # score reproduce (exact rules TBD)

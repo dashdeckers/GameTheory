@@ -6,6 +6,8 @@ class GTAgent(Agent):
         super().__init__(unique_id, model)
         self.strategy = strategy
         self.score = 0
+        self.acted = False
+        self.memory = {}
 
     def move(self):
         # Move to random new (empty!) location in a 9 cell radius
@@ -22,30 +24,54 @@ class GTAgent(Agent):
         new_position = self.random.choice(possible_steps)
         self.model.grid.move_agent(self, new_position)
 
+        # TODO: Maybe move next to a cell occopied by an agent using
+        # the same strategy? Similar animals tend to group together
+        # UPDATE: That will skew results, not recommended
+
+    def get_action(self, opponent):
+        if self.strategy == 'ALLC':
+            return 'C'
+
+        if self.strategy == 'ALLD':
+            return 'D'
+
+        if self.strategy == 'TFT':
+            # First be nice
+            if opponent.unique_id not in self.memory:
+                return 'C'
+
+            # Then be retaliatory but forgiving
+            if self.memory[opponent.unique_id] == 'D':
+                return 'D'
+            if self.memory[opponent.unique_id] == 'C':
+                return 'C'
+
     def interact(self):
-        # Interact with a neighbor, if any, and recieve a score
-        neighbors = self.model.grid.get_neighbors(
+        # Find a neighbor that has not acted yet, if any
+        free_neighbors = [agent for agent in self.model.grid.get_neighbors(
             self.pos,
             moore=True,
             include_center=False,
             radius=1,
-        )
+        ) if not agent.acted]
 
-        if not neighbors:
+        if not free_neighbors or self.acted:
             return
 
-        chosen_neighbor = self.random.choice(neighbors)
+        # Choose an opponent and interact with them
+        opponent = self.random.choice(free_neighbors)
 
-        # illustrative code
-        config = (self.strategy[-1], chosen_neighbor.strategy[-1])
-        print(f'Interaction: {config}, Reward: {self.model.payoff[config]}')
+        my_action = self.get_action(opponent)
+        op_action = opponent.get_action(self)
 
-        # does each agent keep a dictionary of past encounters?
+        self.score += self.model.payoff[(my_action, op_action)]
+        opponent.score += self.model.payoff[(op_action, my_action)]
 
-        # an encounter is a two way interaction, so it can happen that in the
-        # same agent loop a single agent has two or more interactions. how to
-        # handle this?
-        pass
+        self.acted = True
+        opponent.acted = True
+
+        self.memory[opponent.unique_id] = op_action
+        opponent.memory[self.unique_id] = my_action
 
     def step(self):
         self.move()

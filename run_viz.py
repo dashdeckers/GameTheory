@@ -2,12 +2,13 @@ from model import GTModel
 
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
+from mesa.visualization.modules import ChartModule
 
 
 params = {
     'size': 10,
     'n_agents': 5,
-    'strategies': ['ALLC', 'ALLD'],
+    'strategies': ['ALLC', 'ALLD', 'TFT'],
 }
 
 
@@ -18,12 +19,18 @@ def agent_portrayal(agent):
         "r": 0.5
     }
 
+    if agent.strategy == 'ALLC':
+        portrayal["Color"] = "green"
+        portrayal["Layer"] = 0
+        portrayal["r"] = 0.5
+
     if agent.strategy == 'ALLD':
         portrayal["Color"] = "red"
-        portrayal["Layer"] = 1
+        portrayal["Layer"] = 0
         portrayal["r"] = 0.5
-    elif agent.strategy == 'ALLC':
-        portrayal["Color"] = "green"
+
+    if agent.strategy == 'TFT':
+        portrayal["Color"] = "yellow"
         portrayal["Layer"] = 0
         portrayal["r"] = 0.5
 
@@ -37,10 +44,21 @@ grid = CanvasGrid(
     500,
     500,
 )
+chart = ChartModule([
+        {"Label": "ALLC",
+         "Color": "Green"},
+        {"Label": "ALLD",
+         "Color": "Red"},
+        {"Label": "TFT",
+         "Color": "Yellow"},
+    ],
+    data_collector_name='datacollector',
+)
+
 
 server = ModularServer(
     GTModel,
-    [grid],
+    [grid, chart],
     "Prisoners Dilemma Model",
     params,
 )
