@@ -1,5 +1,5 @@
 from model import GTModel
-from reporter_funcs import all_c_score, all_d_score, tft_score
+from reporter_funcs import hawk_count, dove_count
 
 from mesa.batchrunner import BatchRunner
 import matplotlib.pyplot as plt
@@ -7,12 +7,13 @@ import matplotlib.pyplot as plt
 
 # Define parameters
 fix_params = {
-    'size': 10,
-    'strategies': ['ALLC', 'ALLD', 'TFT'],
+    'n_agents': 12,
+    'strategies': ['Hawk', 'Dove'],
+    'init_pop': 'Hawk invader',
 }
 
 var_params = {
-    'n_agents': range(5, 11),
+    'n_food': range(10, 20),
 }
 
 
@@ -21,14 +22,11 @@ batch_runner = BatchRunner(
     GTModel,
     var_params,
     fix_params,
-    # iterations per setting
     iterations=300,
-    # steps per iteration
     max_steps=50,
     model_reporters={
-        "ALLC": all_c_score,
-        "ALLD": all_d_score,
-        "TFT": tft_score,
+        "Hawks": hawk_count,
+        "Doves": dove_count,
     },
 )
 
@@ -38,12 +36,13 @@ data = batch_runner.get_model_vars_dataframe()
 
 # Plot results
 plt.hist(
-    [data[strategy] for strategy in fix_params['strategies']],
-    color=['g', 'r', 'y'],
-    label=fix_params['strategies']
+    [data['Hawks'], data['Doves']],
+    color=['r', 'g'],
+    label=['Hawks', 'Doves'],
 )
-plt.title('Total scores of strategies after 50 steps (random proportions)')
-plt.xlabel('Total score')
+init_pop = fix_params['init_pop']
+plt.title(f'Population sizes after 50 steps ({init_pop})')
+plt.xlabel('Population size')
 plt.ylabel('Counts')
 plt.legend()
 plt.show()

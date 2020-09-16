@@ -1,56 +1,29 @@
 from model import GTModel
 
-from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
-from mesa.visualization.modules import ChartModule
+from mesa.visualization.modules import ChartModule, PieChartModule
 
 
 params = {
-    'size': 10,
-    'n_agents': 5,
-    'strategies': ['ALLC', 'ALLD', 'TFT'],
+    'n_agents': 12,
+    'n_food': 10,
+    'strategies': ['Hawk', 'Dove'],
+    'init_pop': 'Hawk invader',
 }
 
-
-def agent_portrayal(agent):
-    portrayal = {
-        "Shape": "circle",
-        "Filled": "true",
-        "r": 0.5
-    }
-
-    if agent.strategy == 'ALLC':
-        portrayal["Color"] = "green"
-        portrayal["Layer"] = 0
-        portrayal["r"] = 0.5
-
-    if agent.strategy == 'ALLD':
-        portrayal["Color"] = "red"
-        portrayal["Layer"] = 0
-        portrayal["r"] = 0.5
-
-    if agent.strategy == 'TFT':
-        portrayal["Color"] = "yellow"
-        portrayal["Layer"] = 0
-        portrayal["r"] = 0.5
-
-    return portrayal
-
-
-grid = CanvasGrid(
-    agent_portrayal,
-    params['size'],
-    params['size'],
-    500,
-    500,
-)
 chart = ChartModule([
-        {"Label": "ALLC",
+        {"Label": "Doves",
          "Color": "Green"},
-        {"Label": "ALLD",
+        {"Label": "Hawks",
          "Color": "Red"},
-        {"Label": "TFT",
-         "Color": "Yellow"},
+    ],
+    data_collector_name='datacollector',
+)
+pie = PieChartModule([
+        {"Label": "Doves",
+         "Color": "Green"},
+        {"Label": "Hawks",
+         "Color": "Red"},
     ],
     data_collector_name='datacollector',
 )
@@ -58,8 +31,8 @@ chart = ChartModule([
 
 server = ModularServer(
     GTModel,
-    [grid, chart],
-    "Prisoners Dilemma Model",
+    [chart, pie],
+    "Hawk Dove Game",
     params,
 )
 server.port = 8522
