@@ -1,16 +1,12 @@
-# TODO: Find a way to reach the label of the model_reporter calling the func
-# then we can a single function replace all these (DRY!)
-
-def all_d_score(model):
-    return sum([agent.score for agent in model.schedule.agents
-                if agent.strategy == 'ALLD'])
+def total_n_agents(model):
+    return len(model.schedule.agents)
 
 
-def all_c_score(model):
-    return sum([agent.score for agent in model.schedule.agents
-                if agent.strategy == 'ALLC'])
+def n_friendlier(model):
+    return len([agent for agent in model.schedule.agents
+                if sum(agent.strategy)/4 > 0.5])
 
 
-def tft_score(model):
-    return sum([agent.score for agent in model.schedule.agents
-                if agent.strategy == 'TFT'])
+def n_aggressive(model):
+    return len([agent for agent in model.schedule.agents
+                if sum(agent.strategy)/4 < 0.5])

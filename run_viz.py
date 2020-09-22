@@ -1,40 +1,47 @@
+import math
+
 from model import GTModel
 
+from colour import Color
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import ChartModule
 
 
 params = {
-    'size': 10,
-    'n_agents': 5,
-    'strategies': ['ALLC', 'ALLD', 'TFT'],
+    # The map size
+    'size': 20,
+    # Initial number of agents to place at the start of a run
+    'i_n_agents': 60,
+    # Initial strategy for every agent at the start of a run
+    'i_strategy': [0.5, 0.5, 0.5, 0.5],
+    # Initial amount of energy to give each agent at the start of a run
+    'i_energy': 0.5,
+    # Constant for max population control (cost of surviving)
+    'k': -1,  # ???
+    # Constant for controlling dying of old age (T+M == Maximum lifespan)
+    'T': 20,  # ???
+    # Minimum lifespan
+    'M': 10,  # ???
+    # Minimum energy level to reproduce
+    'p': 0.6,  # ???
+    # Mutation "amplitude"
+    'd': 0.5,
 }
 
 
+def sigmoid(x):
+    return 1 / (1 + math.e ** -x)
+
+
 def agent_portrayal(agent):
-    portrayal = {
+    return {
         "Shape": "circle",
         "Filled": "true",
+        "Layer": 0,
+        "Color": Color(rgb=(0, sigmoid(sum(agent.strategy)), 0)).get_hex(),
         "r": 0.5
     }
-
-    if agent.strategy == 'ALLC':
-        portrayal["Color"] = "green"
-        portrayal["Layer"] = 0
-        portrayal["r"] = 0.5
-
-    if agent.strategy == 'ALLD':
-        portrayal["Color"] = "red"
-        portrayal["Layer"] = 0
-        portrayal["r"] = 0.5
-
-    if agent.strategy == 'TFT':
-        portrayal["Color"] = "yellow"
-        portrayal["Layer"] = 0
-        portrayal["r"] = 0.5
-
-    return portrayal
 
 
 grid = CanvasGrid(
@@ -45,12 +52,12 @@ grid = CanvasGrid(
     500,
 )
 chart = ChartModule([
-        {"Label": "ALLC",
+        {"Label": "n_agents",
+         "Color": "Black"},
+        {"Label": "n_friendlier",
          "Color": "Green"},
-        {"Label": "ALLD",
+        {"Label": "n_aggressive",
          "Color": "Red"},
-        {"Label": "TFT",
-         "Color": "Yellow"},
     ],
     data_collector_name='datacollector',
 )
