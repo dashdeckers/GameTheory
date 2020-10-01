@@ -83,8 +83,8 @@ class GTAgent(Agent):
         self.prev_interaction = interaction
 
     def step(self):
-        print('\n---------------------------')
-        print(f'Cost of Surviving: {self.model.alpha()}')
+        #print('\n---------------------------')
+        #print(f'Cost of Surviving: {self.model.alpha()}')
         self.interact()
         self.move()
-        pprint(vars(self))
+        #pprint(vars(self))

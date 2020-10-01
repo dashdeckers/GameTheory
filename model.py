@@ -65,9 +65,20 @@ class GTModel(Model):
         return agent.total_energy < 0 or self.random.random() < prob_too_old
 
     def get_child_location(self, agent=None):
-        # TODO: Return a nearby location if agent is provided, for kinship
-        if agent is None:
-            return self.random.choice(sorted(self.grid.empties))
+        if agent:
+            #Iterate over the radius, starting at 1 to find empty cells
+            for rad in range(1, int(self.size/2)):
+                possible_steps = [cell for cell in self.grid.get_neighborhood(
+                agent.pos, moore=False,
+                include_center=False, radius=rad,
+                ) if self.grid.is_cell_empty(cell)]
+                
+                if possible_steps:
+                    return self.random.choice(possible_steps)
+                
+            #If there is no free cells in radius size/2 pick a random empty cell   
+            if not possible_steps or agent is None:
+                return self.random.choice(sorted(self.grid.empties))
 
     def maybe_mutate(self, strategy):
         # Copy the damn list
@@ -95,7 +106,7 @@ class GTModel(Model):
 
             # Place child
             self.schedule.add(child)
-            self.grid.place_agent(child, self.get_child_location())
+            self.grid.place_agent(child, self.get_child_location(agent))
 
     def step(self):
         print('\n\n==================================================')
@@ -104,17 +115,16 @@ class GTModel(Model):
 
         # First collect data
         self.datacollector.collect(self)
-
+        
         # Then check for dead agents and for new agents
         for agent in self.schedule.agent_buffer(shuffled=True):
             # First check if dead
             if self.time_to_die(agent):
                 self.grid.remove_agent(agent)
                 self.schedule.remove(agent)
-
+                
             # Otherwise check if can reproduce
             else:
                 self.maybe_reproduce(agent)
-
         # Finally, step each agent
         self.schedule.step()

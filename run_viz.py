@@ -12,7 +12,7 @@ params = {
     # The map size
     'size': 20,
     # Initial number of agents to place at the start of a run
-    'i_n_agents': 60,
+    'i_n_agents': 100,
     # Initial strategy for every agent at the start of a run
     'i_strategy': [0.5, 0.5, 0.5, 0.5],
     # Initial amount of energy to give each agent at the start of a run
