@@ -28,8 +28,6 @@ class GTAgent(Agent):
             # alpha is in [-1, 15) for k=-1  (with N from 0-400 on a 20x20 map)
             # If we take N=200 as the max population, we get alpha=7
             # The worst possible payoff per round is 4*-3=-12
-
-            # Right now: forget alpha, just base it on the worst payoff
             prob_moving = 0
             if self.delta_energy < 0:
                 prob_moving = self.delta_energy / -12

@@ -13,13 +13,13 @@ params = {
     # The map size
     'size': 20,  # 20
     # Initial number of agents to place at the start of a run
-    'i_n_agents': 100,  # 60  (supposed to naturally grow to avg 100)
+    'i_n_agents': 60,  # 60  (supposed to naturally grow to avg 100)
     # Initial strategy for every agent at the start of a run
     'i_strategy': [0.5, 0.5, 0.5, 0.5],  # [0.5] * 4
     # Initial amount of energy to give each agent at the start of a run
     'i_energy': 0.5,  # ???
     # Constant for max population control (cost of surviving)
-    'k': -3,  # ???
+    'k': -4,  # ???
     # Constant for controlling dying of old age (T+M == Maximum lifespan)
     'T': 10,  # ???
     # Minimum lifespan
@@ -29,7 +29,7 @@ params = {
     # Mutation 'amplitude'
     'd': 0.3,  # 0.1
     # Whether to spawn children near parents or randomly
-    'child_location': 'global',  # 'global'
+    'child_location': 'local',  # 'global'
     # Specify the type of movement allowed for the agents
     'movement': 'local-prob',  # 'local-prob'
     # Whether to print debug statements
@@ -37,14 +37,25 @@ params = {
 
     # Strategies to count
     'strategies_to_count': {
-            'ALLC': [1, 1, 1, 1],
-            'ALLD': [0, 0, 0, 0],
-            'TFT':  [1, 0, 1, 0],
-            'GRIM': [1, 0, 0, 0],
-            'PAV':  [1, 0, 0, 1],
+            'ALLC':     [1, 1, 1, 1],
+            'ALLD':     [0, 0, 0, 0],
+            'TFT':      [1, 0, 1, 0],
+            'GRIM':     [1, 0, 0, 0],
+            'PAVLOV':   [1, 0, 0, 1],
+            'GUILTY':   [0, 0, 1, 0],
+            'BRAT':     [0, 1, 0, 1],
+            'ISSUES':   [0, 1, 1, 1],
+            'DIPLOMAT': [1, 0, 1, 1],
+            'NEGPAV':   [0, 1, 1, 0],
+            'PSYCHO':   [1, 1, 0, 1],
+            'REPEATER': [1, 1, 0, 0],
+            'SWITCHER': [0, 0, 1, 1],
+            'CRYBABY':  [0, 1, 0, 0],
+            '0001':     [0, 0, 0, 1],
+            '1110':     [1, 1, 1, 0],
     },
     # Count tolerance
-    'count_tolerance': 0.4,
+    'count_tolerance': 0.3,
 }
 
 
@@ -73,7 +84,7 @@ total_chart = ChartModule([
     {'Label': 'n_agents',
      'Color': 'Black'},
 ])
-# strat_chart = ChartModule([
+# strategy_sum_chart = ChartModule([
 #     {'Label': 'n_friendlier',
 #      'Color': 'Green'},
 #     {'Label': 'n_aggressive',
@@ -83,17 +94,22 @@ perc_chart = ChartModule([
     {'Label': 'perc_cooperative_actions',
      'Color': 'Green'},
 ])
-colors = ['Green', 'Red', 'Yellow', 'Orange', 'Blue']
-strat_pie = ChartModule([
+
+strategy_colors = [
+    'Green', 'Red', 'Yellow', 'Orange', 'Blue',
+    'Aqua', 'Black', 'Fuchsia', 'Gray', 'Lime',
+    'Maroon', 'Navy', 'Olive', 'Purple', 'Silver', 'Teal'
+]
+strategy_chart = ChartModule([
     {'Label': label, 'Color': color}
     for label, color in
-    zip(params['strategies_to_count'].keys(), colors)
+    zip(params['strategies_to_count'].keys(), strategy_colors)
 ])
 
 
 server = ModularServer(
     GTModel,
-    [grid, total_chart, perc_chart, strat_pie],
+    [grid, total_chart, perc_chart, strategy_chart],
     'Prisoners Dilemma Model',
     params,
 )
