@@ -17,8 +17,30 @@ class GTAgent(Agent):
         # into a percentage and use that as an inverse probability of moving
 
         # If the last interaction was positive, don't move
-        if self.delta_energy > 0:
+        if self.model.movement == 'none':
             return
+
+        if self.model.movement == 'global':
+            return self.random.choice(sorted(self.model.grid.empties))
+
+        if self.model.movement == 'local-free':
+            # If the last interaction was positive, don't move
+            if self.delta_energy > 0:
+                return
+
+        if self.model.movement == 'local-prob':
+            # Determine whether to move based on delta_energy
+            # alpha is in [-1, 15) for k=-1  (with N from 0-400 on a 20x20 map)
+            # If we take N=200 as the max population, we get alpha=7
+            # The worst possible payoff per round is 4*-3=-12
+
+            # Right now: forget alpha, just base it on the worst payoff
+            prob_moving = 0
+            if self.delta_energy < 0:
+                prob_moving = self.delta_energy / -12
+
+            if self.random.random() < prob_moving:
+                return
 
         # Van Neumann neighborhood
         possible_steps = [cell for cell in self.model.grid.get_neighborhood(

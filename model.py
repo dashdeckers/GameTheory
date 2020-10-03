@@ -32,6 +32,8 @@ class GTModel(Model):
         self.p = p
         # Mutation "amplitude"
         self.d = d
+        # Specify the type of movement allowed for the agents
+        self.movement = movement
 
         # Add agents (one agent per cell)
         all_coords = [(x, y) for x in range(size) for y in range(size)]
