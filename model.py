@@ -98,7 +98,10 @@ class GTModel(Model):
             # Each Pi is mutated uniformly by [-d, d]
             for i in range(4):
                 mutation = self.random.uniform(-self.d, self.d)
-                new_strategy[i] += mutation
+                new_val = new_strategy[i] + mutation
+                # Keep probabilities in [0, 1]
+                new_val = 0 if new_val < 0 else 1 if new_val > 1 else new_val
+                new_strategy[i] = new_val
 
         return new_strategy
 
