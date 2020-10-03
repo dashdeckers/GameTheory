@@ -31,6 +31,8 @@ params = {
     'child_location': 'global',  # 'global'
     # Specify the type of movement allowed for the agents
     'movement': 'local-prob',  # 'local-prob'
+    # Whether to print debug statements
+    'debug': True,
 }
 
 

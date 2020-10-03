@@ -9,9 +9,11 @@ from mesa.datacollection import DataCollector
 
 class GTModel(Model):
     def __init__(self, size, i_n_agents, i_strategy, i_energy, k, T, M, p, d):
+    def __init__(self, debug, size, i_n_agents, i_strategy, i_energy,
         self.grid = SingleGrid(size, size, torus=True)
         self.schedule = RandomActivation(self)
         self.running = True
+        self.debug = debug
         self.size = size
         self.agent_idx = 0
 
@@ -117,20 +119,21 @@ class GTModel(Model):
             self.grid.place_agent(child, self.get_child_location(agent))
 
     def step(self):
-        print('\n\n==================================================')
-        print('==================================================')
-        print('==================================================')
+        if self.debug:
+            print('\n\n==================================================')
+            print('==================================================')
+            print('==================================================')
 
         # First collect data
         self.datacollector.collect(self)
-        
+
         # Then check for dead agents and for new agents
         for agent in self.schedule.agent_buffer(shuffled=True):
             # First check if dead
             if self.time_to_die(agent):
                 self.grid.remove_agent(agent)
                 self.schedule.remove(agent)
-                
+
             # Otherwise check if can reproduce
             else:
                 self.maybe_reproduce(agent)

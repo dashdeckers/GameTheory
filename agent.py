@@ -12,11 +12,6 @@ class GTAgent(Agent):
         self.prev_interaction = None
 
     def move(self):
-        # TODO: Implement the probability to move equals delta_energy (unclear)
-        # My guess: determine the range [min, max] of delta_energy then convert
-        # into a percentage and use that as an inverse probability of moving
-
-        # If the last interaction was positive, don't move
         if self.model.movement == 'none':
             return
 
@@ -105,8 +100,11 @@ class GTAgent(Agent):
         self.prev_interaction = interaction
 
     def step(self):
-        #print('\n---------------------------')
-        #print(f'Cost of Surviving: {self.model.alpha()}')
         self.interact()
         self.move()
-        #pprint(vars(self))
+
+        if self.model.debug:
+            print('\n---------------------------')
+            print(f'Cost of Surviving: {self.model.alpha()}')
+            print(f'Agent strategy: {self.model.check_strategy(self)}')
+            pprint(vars(self))
