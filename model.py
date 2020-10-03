@@ -32,6 +32,8 @@ class GTModel(Model):
         self.p = p
         # Mutation "amplitude"
         self.d = d
+        # Whether to spawn children near parents or randomly
+        self.child_location = child_location
         # Specify the type of movement allowed for the agents
         self.movement = movement
 
@@ -66,21 +68,25 @@ class GTModel(Model):
         prob_too_old = (agent.age - self.T) / self.M
         return agent.total_energy < 0 or self.random.random() < prob_too_old
 
-    def get_child_location(self, agent=None):
-        if agent:
-            #Iterate over the radius, starting at 1 to find empty cells
+    def get_child_location(self, agent):
+        if self.child_location == 'global':
+            return self.random.choice(sorted(self.grid.empties))
+
+        elif self.child_location == 'local':
+            # Iterate over the radius, starting at 1 to find empty cells
             for rad in range(1, int(self.size/2)):
                 possible_steps = [cell for cell in self.grid.get_neighborhood(
-                agent.pos, moore=False,
-                include_center=False, radius=rad,
+                    agent.pos,
+                    moore=False,
+                    include_center=False,
+                    radius=rad,
                 ) if self.grid.is_cell_empty(cell)]
-                
+
                 if possible_steps:
                     return self.random.choice(possible_steps)
-                
-            #If there is no free cells in radius size/2 pick a random empty cell   
-            if not possible_steps or agent is None:
-                return self.random.choice(sorted(self.grid.empties))
+
+            # If no free cells in radius size/2 pick a random empty cell
+            return self.random.choice(sorted(self.grid.empties))
 
     def maybe_mutate(self, strategy):
         # Copy the damn list
@@ -106,7 +112,7 @@ class GTModel(Model):
             child.total_energy = self.p / 2
             agent.total_energy = self.p / 2
 
-            # Place child
+            # Place child (Remove agent argument for global child placement)
             self.schedule.add(child)
             self.grid.place_agent(child, self.get_child_location(agent))
 

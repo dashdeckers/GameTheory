@@ -27,6 +27,8 @@ params = {
     'p': 0.6,  # ???
     # Mutation "amplitude"
     'd': 0.5,
+    # Whether to spawn children near parents or randomly
+    'child_location': 'global',  # 'global'
     # Specify the type of movement allowed for the agents
     'movement': 'local-prob',  # 'local-prob'
 }
