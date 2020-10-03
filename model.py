@@ -1,5 +1,6 @@
 from agent import GTAgent
-from reporter_funcs import total_n_agents, n_aggressive, n_friendlier
+from reporter_funcs import (total_n_agents, n_aggressive, n_friendlier,
+                            perc_cooperative_actions, strategy_counter_factory)
 
 from mesa import Model
 from mesa.time import RandomActivation
@@ -8,8 +9,9 @@ from mesa.datacollection import DataCollector
 
 
 class GTModel(Model):
-    def __init__(self, size, i_n_agents, i_strategy, i_energy, k, T, M, p, d):
     def __init__(self, debug, size, i_n_agents, i_strategy, i_energy,
+                 child_location, movement, k, T, M, p, d,
+                 strategies_to_count, count_tolerance):
         self.grid = SingleGrid(size, size, torus=True)
         self.schedule = RandomActivation(self)
         self.running = True
@@ -39,6 +41,10 @@ class GTModel(Model):
         # Specify the type of movement allowed for the agents
         self.movement = movement
 
+        # Vars regarding which strategies to look for
+        self.strategies_to_count = strategies_to_count
+        self.count_tolerance = count_tolerance
+
         # Add agents (one agent per cell)
         all_coords = [(x, y) for x in range(size) for y in range(size)]
         agent_coords = self.random.sample(all_coords, i_n_agents)
@@ -50,11 +56,15 @@ class GTModel(Model):
             self.grid.place_agent(agent, agent_coords.pop())
 
         # Collect data
-        self.datacollector = DataCollector(model_reporters={
+        self.datacollector = DataCollector(model_reporters={**{
             'n_agents': total_n_agents,
             'n_friendlier': n_friendlier,
             'n_aggressive': n_aggressive,
-        })
+            'perc_cooperative_actions': perc_cooperative_actions,
+        }, **{
+            label: strategy_counter_factory(strategy, count_tolerance, self)
+            for label, strategy in strategies_to_count.items()
+        }})
 
     def alpha(self):
         # Return the cost of surviving, alpha
@@ -142,3 +152,15 @@ class GTModel(Model):
                 self.maybe_reproduce(agent)
         # Finally, step each agent
         self.schedule.step()
+
+    def check_strategy(self, agent):
+        def is_same(strategy, a_strategy):
+            tol = self.count_tolerance
+            return all(
+                strategy[i] - tol < a_strategy[i] < strategy[i] + tol
+                for i in range(4)
+            )
+        return [
+            name for name, strat in self.strategies_to_count.items()
+            if is_same(strat, agent.strategy)
+        ]
