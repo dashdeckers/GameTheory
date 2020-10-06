@@ -24,8 +24,8 @@ class GTModel(Model):
         # Payoff matrix in the form (my_move, op_move) : my_reward
         self.payoff = {
             ('C', 'C'): 1,
-            ('C', 'D'): -5,
-            ('D', 'C'): 5,
+            ('C', 'D'): -3,
+            ('D', 'C'): 3,
             ('D', 'D'): -1,
         }
         # Constant for max population control (cost of surviving)
@@ -82,7 +82,7 @@ class GTModel(Model):
         # There is a chance every iteration to die of old age: (A - T) / M
         # There is a 100% to die if the agents total energy reaches 0
         prob_too_old = (agent.age - self.T) / self.M
-        return agent.total_energy < -100 or self.random.random() < prob_too_old
+        return agent.total_energy < -20 or self.random.random() < prob_too_old
 
     def get_child_location(self, agent):
         if self.child_location == 'global':

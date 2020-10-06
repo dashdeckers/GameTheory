@@ -20,8 +20,9 @@ class GTAgent(Agent):
 
         if self.model.movement == 'local-free':
             # If the last interaction was positive, don't move
-            if self.delta_energy > 0:
+            if self.delta_energy >= 1:
                 return
+                
 
         if self.model.movement == 'local-prob':
             # Determine whether to move based on delta_energy
@@ -88,18 +89,14 @@ class GTAgent(Agent):
         # Interact with each neighbor and sum energy changes
         interaction = None
         for opponent in neighbors:
-            print(self.strategy, opponent.strategy)
-            action = self.action()
-            opp_action = opponent.action()
-            print(action, opp_action)
-            interaction = (action, opp_action)
+            interaction = (self.action(), opponent.action())
             self.delta_energy += self.model.payoff[interaction]
 
         # Subtract the cost of surviving and update total energy
         self.delta_energy -= self.model.alpha()
         self.total_energy += self.delta_energy
 
-        # Remember the last interaction (TODO: Seems arbitrary?)
+        # Update the last interaction, if there was one
         if interaction:
             self.prev_interaction = interaction
 

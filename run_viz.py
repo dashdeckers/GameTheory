@@ -22,17 +22,17 @@ params = {
     # Constant for max population control (cost of surviving)
     'k': -3,  # -3 gives alpha=0 for 100 agents
     # Constant for controlling dying of old age (T+M == Maximum lifespan)
-    'T': 100,  # ???
+    'T': 50,  # ???
     # Minimum lifespan
-    'M': 500,  # ???
+    'M': 100,  # ???
     # Minimum energy level to reproduce
     'p': 2,  # ???
     # Mutation 'amplitude'
     'd': 0.05,  # 0.1
     # Whether to spawn children near parents or randomly
-    'child_location': 'global',  # 'local'
+    'child_location': 'local',  # 'local' or 'global'
     # Specify the type of movement allowed for the agents
-    'movement': 'global', # 'local-prob', 'local-free', 'global' or 'none'
+    'movement': 'local-free', # 'local-prob', 'local-free', 'global' or 'none'
     # Specify how agents mutate
     'mut_type': 'stochastic', #'numeric' or 'stochastic'
     # Whether to print debug statements
