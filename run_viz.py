@@ -5,7 +5,7 @@ from model import GTModel
 from colour import Color
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
-from mesa.visualization.modules import ChartModule
+from mesa.visualization.modules import ChartModule, PieChartModule
 
 
 # In comments: The values from the paper
@@ -59,11 +59,10 @@ params = {
 }
 
 
-def sigmoid(x):
-    return 1 / (1 + math.e ** -x)
-
-
 def agent_portrayal(agent):
+    def sigmoid(x):
+        return 1 / (1 + math.e ** -x)
+
     return {
         'Shape': 'circle',
         'Filled': 'true',
@@ -96,11 +95,12 @@ perc_chart = ChartModule([
 ])
 
 strategy_colors = [
-    'Green', 'Red', 'Yellow', 'Orange', 'Blue',
+    'Maroon', 'Green', 'Red', 'Yellow', 'Orange', 'Blue',
     'Aqua', 'Black', 'Fuchsia', 'Gray', 'Lime',
-    'Maroon', 'Navy', 'Olive', 'Purple', 'Silver', 'Teal'
+    'Maroon', 'Navy', 'Olive', 'Purple', 'Silver',
+    'Teal',
 ]
-strategy_chart = ChartModule([
+strategy_chart = PieChartModule([
     {'Label': label, 'Color': color}
     for label, color in
     zip(params['strategies_to_count'].keys(), strategy_colors)

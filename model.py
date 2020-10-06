@@ -1,11 +1,14 @@
 from agent import GTAgent
 from reporter_funcs import (total_n_agents, n_aggressive, n_friendlier,
-                            perc_cooperative_actions, strategy_counter_factory)
+                            perc_cooperative_actions, strategy_counter_factory,
+                            get_strategies)
 
 from mesa import Model
 from mesa.time import RandomActivation
 from mesa.space import SingleGrid
 from mesa.datacollection import DataCollector
+
+from pprint import pprint
 
 
 class GTModel(Model):
@@ -56,15 +59,18 @@ class GTModel(Model):
             self.grid.place_agent(agent, agent_coords.pop())
 
         # Collect data
-        self.datacollector = DataCollector(model_reporters={**{
-            'n_agents': total_n_agents,
-            'n_friendlier': n_friendlier,
-            'n_aggressive': n_aggressive,
-            'perc_cooperative_actions': perc_cooperative_actions,
-        }, **{
-            label: strategy_counter_factory(strategy, count_tolerance, self)
-            for label, strategy in strategies_to_count.items()
-        }})
+        self.datacollector = DataCollector(model_reporters={
+            **{
+                'strategies': get_strategies,
+                'n_agents': total_n_agents,
+                'n_friendlier': n_friendlier,
+                'n_aggressive': n_aggressive,
+                'perc_cooperative_actions': perc_cooperative_actions,
+            }, **{
+                label: strategy_counter_factory(strategy, count_tolerance)
+                for label, strategy in strategies_to_count.items()
+            }
+        })
 
     def alpha(self):
         # Return the cost of surviving, alpha
@@ -136,6 +142,7 @@ class GTModel(Model):
             print('\n\n==================================================')
             print('==================================================')
             print('==================================================')
+            pprint(vars(self))
 
         # First collect data
         self.datacollector.collect(self)

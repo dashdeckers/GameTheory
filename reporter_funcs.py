@@ -27,7 +27,11 @@ def perc_cooperative_actions(model):
     return len(non_coop_agents) / len(active_agents)
 
 
-def strategy_counter_factory(strategy, tol, model):
+def get_strategies(model):
+    return [agent.strategy for agent in model.schedule.agents]
+
+
+def strategy_counter_factory(strategy, tol):
     def strategy_counter(model):
         return len([
             a for a in model.schedule.agents
