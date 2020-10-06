@@ -56,7 +56,8 @@ class GTAgent(Agent):
         if not self.prev_interaction:
             if self.random.random() < 0.5:
                 return 'C'
-            return 'D'
+            else:
+                return 'D'
 
         # Strategy: P(C|prev), where prev in [CC, CD, DC, DD]
         # Represented by a dictionary: {prev_interaction: P(C)}
@@ -68,7 +69,8 @@ class GTAgent(Agent):
 
         if self.random.random() < prob_dict[self.prev_interaction]:
             return 'C'
-        return 'D'
+        else:
+            return 'D'
 
     def interact(self):
         # Reset delta energy
@@ -83,11 +85,14 @@ class GTAgent(Agent):
             include_center=False,
             radius=1,
         )
-
         # Interact with each neighbor and sum energy changes
         interaction = None
         for opponent in neighbors:
-            interaction = (self.action(), opponent.action())
+            print(self.strategy, opponent.strategy)
+            action = self.action()
+            opp_action = opponent.action()
+            print(action, opp_action)
+            interaction = (action, opp_action)
             self.delta_energy += self.model.payoff[interaction]
 
         # Subtract the cost of surviving and update total energy
@@ -95,7 +100,8 @@ class GTAgent(Agent):
         self.total_energy += self.delta_energy
 
         # Remember the last interaction (TODO: Seems arbitrary?)
-        self.prev_interaction = interaction
+        if interaction:
+            self.prev_interaction = interaction
 
     def step(self):
         self.interact()

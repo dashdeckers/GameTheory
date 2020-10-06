@@ -13,7 +13,7 @@ import random
 class GTModel(Model):
     def __init__(self, debug, size, i_n_agents, i_strategy, i_energy,
                  child_location, movement, k, T, M, p, d,
-                 strategies_to_count, count_tolerance):
+                 strategies_to_count, count_tolerance, mut_type):
         self.grid = SingleGrid(size, size, torus=True)
         self.schedule = RandomActivation(self)
         self.running = True
@@ -42,6 +42,8 @@ class GTModel(Model):
         self.child_location = child_location
         # Specify the type of movement allowed for the agents
         self.movement = movement
+        # Specify the type of mutation
+        self.mut_type = mut_type
 
         # Vars regarding which strategies to look for
         self.strategies_to_count = strategies_to_count
@@ -102,9 +104,9 @@ class GTModel(Model):
             # If no free cells in radius size/2 pick a random empty cell
             return self.random.choice(sorted(self.grid.empties))
 
-    def maybe_mutate(self, strategy, mut_type='stochastic'):
+    def maybe_mutate(self, strategy):
         #Mutate by adding a random d to individual Pi's
-        if mut_type == 'numeric':
+        if self.mut_type == 'numeric':
             # Copy the damn list
             new_strategy = strategy.copy()
             # There is a 20% chance of mutation
@@ -117,7 +119,7 @@ class GTModel(Model):
                     new_val = 0 if new_val < 0 else 1 if new_val > 1 else new_val
                     new_strategy[i] = new_val
         #Mutate by choosing a random strategy from the list set
-        elif mut_type == 'stochastic':
+        elif self.mut_type == 'stochastic':
             new_strategy = random.choice(list(self.strategies_to_count.values()))
 
         return new_strategy

@@ -33,8 +33,10 @@ params = {
     'child_location': 'global',  # 'local'
     # Specify the type of movement allowed for the agents
     'movement': 'global', # 'local-prob', 'local-free', 'global' or 'none'
+    # Specify how agents mutate
+    'mut_type': 'stochastic', #'numeric' or 'stochastic'
     # Whether to print debug statements
-    'debug': True, # 'True' or 'False'
+    'debug': False, # 'True' or 'False'
 
     # Strategies to count
     'strategies_to_count': {
@@ -56,7 +58,7 @@ params = {
             #'1110':     [1, 1, 1, 0],
     },
     # Count tolerance
-    'count_tolerance': 0.3,
+    'count_tolerance': 0.01,
 }
 
 def sigmoid(x):
