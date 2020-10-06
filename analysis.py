@@ -1,54 +1,49 @@
-from sklearn.decomposition import PCA
+"""Visualize the data gathered from a batch run.
+
+Must use the same iterations, max_steps and run_name parameter value as the
+last batch run used. Could fix this for multiple different datasets by saving
+the experiment values as JSON along with the datasets themselves.
+
+Problem for later though.
+"""
+from parameters import strategy_colors, iterations, max_steps, run_name
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D  # noqa
 import pandas as pd
-import numpy as np
-import json
-import gif
-from tqdm import tqdm
-from pathlib import Path
 
 
-# Read data
-df = pd.read_csv('step_data_tSNE.csv')
-rows = list()
-for idx, row in df['strategies'].iteritems():
-    rows.append(np.array(json.loads(row)))
+def plot_strategies(iterations, max_steps, step_data):
+    """Plot all strategies over time."""
 
+    # Don't need these columns
+    cols = [
+        'perc_cooperative_actions', 'n_agents',
+        'n_friendlier', 'n_aggressive', 'avg_agent_age'
+    ]
 
-# Define plotter
-@gif.frame
-def plot_transformed(transformed, show=False):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.bar3d(transformed[:, 0], transformed[:, 1], transformed[:, 2],
-             np.ones(len(transformed)), np.ones(len(transformed)), np.ones(len(transformed)))
-    ax.set_xlim(-1, 1)
-    ax.set_ylim(-1, 1)
-    ax.set_zlim(-1, 1)
-
-    if show:
+    for i in range(0, iterations):
+        row_indices = slice(i * max_steps, (i+1) * max_steps)
+        step_data[row_indices].drop(columns=cols).plot(color=strategy_colors)
+        plt.title('Strategies over time')
         plt.show()
 
 
-# Prepare environment
-pca = PCA(n_components=3)
-gif.options.matplotlib['dpi'] = 300
-init_transform = pca.fit_transform(rows[1])
+def plot_single_column(iterations, max_steps, step_data, col_name):
+    """Plot a single column which can be specified."""
+    for i in range(0, iterations):
+        row_indices = slice(i * max_steps, (i+1) * max_steps)
+        step_data[row_indices][col_name].plot()
+        plt.title(f'Showing: {col_name}')
+        plt.show()
 
-# Create frames
-frames = []
-for idx, row in enumerate(tqdm(rows)):
-    transformed = pca.transform(row)
-    frames.append(plot_transformed(transformed))
 
-    if idx > 0 and idx % 100 == 0:
-        gif.save(
-            frames,
-            Path() / f'PCA_{idx}.gif',
-            duration=5,
-            unit='s',
-            between='startend'
-        )
-        frames = []
-        import sys; sys.exit()
+# Read data
+step_data = pd.read_csv(f'step_data_{run_name}.csv', index_col=0)
+
+# Plot data
+plot_strategies(iterations, max_steps, step_data)
+plot_single_column(
+    iterations,
+    max_steps,
+    step_data,
+    'perc_cooperative_actions'
+)
