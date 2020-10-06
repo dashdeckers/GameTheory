@@ -1,31 +1,39 @@
+# In comments: The values from the paper
 params = {
     # The map size
     'size': 20,  # 20
     # Initial number of agents to place at the start of a run
     'i_n_agents': 60,  # 60  (supposed to naturally grow to avg 100)
-    # Initial strategy for every agent at the start of a run
-    'i_strategy': [0.5, 0.5, 0.5, 0.5],  # [0.5] * 4
     # Initial amount of energy to give each agent at the start of a run
     'i_energy': 0.5,  # ???
+    # Initial strategy for every agent at the start of a run
+    'i_strategy': [0.5, 0.5, 0.5, 0.5],  # [0.5] * 4
     # Constant for max population control (cost of surviving)
-    'k': -2.5,
+    'k': -3,  # ??? (-3 gives alpha=0 for 100 agents)
     # Constant for controlling dying of old age (T+M == Maximum lifespan)
-    'T': 10,
+    'T': 50,  # ???
     # Minimum lifespan
-    'M': 5,
+    'M': 100,  # ???
     # Minimum energy level to reproduce
-    'p': 1,
+    'p': 2,  # ???
     # Mutation 'amplitude'
-    'd': 0.1,
+    'd': 0.1,  # 0.1
+    # The minimum total_energy needed for an agent to survive
+    'death_threshold': 0,  # 0
+
     # Whether to spawn children near parents or randomly
+    # Must be in ['local' or 'global']
     'child_location': 'global',
     # Specify the type of movement allowed for the agents
-    'movement': 'local-prob',
-    # Whether to print debug statements
-    'debug': False,
+    # Must be in ['local-prob', 'local-free', 'global', 'none']
+    'movement': 'local-prob',  # 'local-prob'
+    # Specify how agents mutate
+    # Must be in ['fixed', 'stochastic']
+    'mutation_type': 'stochastic',  # 'stochastic'
+
     # Strategies to count
+    # P(C|S), where S in [CC, CD, DC, DD]
     'strategies_to_count': {
-            # 'RANDOM':   [.5, .5, .5, .5],
             'ALLC':     [1, 1, 1, 1],
             'ALLD':     [0, 0, 0, 0],
             'TFT':      [1, 0, 1, 0],
@@ -43,7 +51,29 @@ params = {
             '0001':     [0, 0, 0, 1],
             '1110':     [1, 1, 1, 0],
     },
-
     # Count tolerance
-    'count_tolerance': 0.3,
+    'count_tolerance': 0.4,
+
+    # Whether to print debug statements
+    'debug': False,  # 'True' or 'False'
+}
+
+strategy_colors = [
+    'Green', 'Red', 'Yellow', 'Orange', 'Blue',
+    'Aqua', 'Black', 'Fuchsia', 'Gray', 'Lime',
+    'Maroon', 'Navy', 'Olive', 'Purple', 'Silver',
+    'Teal', 'White',
+]
+
+# Batch run parameters
+run_name = 'PAPER_REPRODUCED'
+iterations = 5
+max_steps = 2000
+
+# Needs at least one item even if its a single value: [60]
+var_params = {
+    'i_n_agents': [60],
+    # 'd': [0.1],
+    # 'k': range(-2, 1),
+    # 'p': [i/10 for i in range(1, 11)],
 }
