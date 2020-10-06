@@ -16,7 +16,7 @@ class GTAgent(Agent):
             return
 
         if self.model.movement == 'global':
-            return self.random.choice(sorted(self.model.grid.empties))
+            self.model.grid.move_agent(self, self.random.choice(sorted(self.model.grid.empties)))
 
         if self.model.movement == 'local-free':
             # If the last interaction was positive, don't move

@@ -7,6 +7,8 @@ from mesa.time import RandomActivation
 from mesa.space import SingleGrid
 from mesa.datacollection import DataCollector
 
+import random
+
 
 class GTModel(Model):
     def __init__(self, debug, size, i_n_agents, i_strategy, i_energy,
@@ -22,8 +24,8 @@ class GTModel(Model):
         # Payoff matrix in the form (my_move, op_move) : my_reward
         self.payoff = {
             ('C', 'C'): 1,
-            ('C', 'D'): -3,
-            ('D', 'C'): 3,
+            ('C', 'D'): -5,
+            ('D', 'C'): 5,
             ('D', 'D'): -1,
         }
         # Constant for max population control (cost of surviving)
@@ -50,7 +52,7 @@ class GTModel(Model):
         agent_coords = self.random.sample(all_coords, i_n_agents)
 
         for _ in range(i_n_agents):
-            agent = GTAgent(self.agent_idx, self, i_strategy.copy(), i_energy)
+            agent = GTAgent(self.agent_idx, self, i_strategy, i_energy)
             self.agent_idx += 1
             self.schedule.add(agent)
             self.grid.place_agent(agent, agent_coords.pop())
@@ -78,7 +80,7 @@ class GTModel(Model):
         # There is a chance every iteration to die of old age: (A - T) / M
         # There is a 100% to die if the agents total energy reaches 0
         prob_too_old = (agent.age - self.T) / self.M
-        return agent.total_energy < 0 or self.random.random() < prob_too_old
+        return agent.total_energy < -100 or self.random.random() < prob_too_old
 
     def get_child_location(self, agent):
         if self.child_location == 'global':
@@ -100,18 +102,23 @@ class GTModel(Model):
             # If no free cells in radius size/2 pick a random empty cell
             return self.random.choice(sorted(self.grid.empties))
 
-    def maybe_mutate(self, strategy):
-        # Copy the damn list
-        new_strategy = strategy.copy()
-        # There is a 20% chance of mutation
-        if self.random.random() < 0.2:
-            # Each Pi is mutated uniformly by [-d, d]
-            for i in range(4):
-                mutation = self.random.uniform(-self.d, self.d)
-                new_val = new_strategy[i] + mutation
-                # Keep probabilities in [0, 1]
-                new_val = 0 if new_val < 0 else 1 if new_val > 1 else new_val
-                new_strategy[i] = new_val
+    def maybe_mutate(self, strategy, mut_type='stochastic'):
+        #Mutate by adding a random d to individual Pi's
+        if mut_type == 'numeric':
+            # Copy the damn list
+            new_strategy = strategy.copy()
+            # There is a 20% chance of mutation
+            if self.random.random() < 0.2:
+                # Each Pi is mutated uniformly by [-d, d]
+                for i in range(4):
+                    mutation = self.random.uniform(-self.d, self.d)
+                    new_val = new_strategy[i] + mutation
+                    # Keep probabilities in [0, 1]
+                    new_val = 0 if new_val < 0 else 1 if new_val > 1 else new_val
+                    new_strategy[i] = new_val
+        #Mutate by choosing a random strategy from the list set
+        elif mut_type == 'stochastic':
+            new_strategy = random.choice(list(self.strategies_to_count.values()))
 
         return new_strategy
 

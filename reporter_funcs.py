@@ -22,7 +22,7 @@ def perc_cooperative_actions(model):
 
     non_coop_agents = [
         a for a in active_agents if a.prev_interaction[0] == 'C'
-    ]
+    ]  #Non coop agents name but returning agents who did coop?
 
     return len(non_coop_agents) / len(active_agents)
 
