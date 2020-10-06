@@ -1,22 +1,22 @@
+from pprint import pprint
+import random
+
 from agent import GTAgent
 from reporter_funcs import (total_n_agents, n_aggressive, n_friendlier,
                             perc_cooperative_actions, strategy_counter_factory,
-                            get_strategies)
+                            get_strategies, avg_agent_age)
 
 from mesa import Model
 from mesa.time import RandomActivation
 from mesa.space import SingleGrid
 from mesa.datacollection import DataCollector
 
-from pprint import pprint
-
-import random
-
 
 class GTModel(Model):
     def __init__(self, debug, size, i_n_agents, i_strategy, i_energy,
                  child_location, movement, k, T, M, p, d,
-                 strategies_to_count, count_tolerance, mut_type):
+                 strategies_to_count, count_tolerance, mutation_type,
+                 death_threshold):
         self.grid = SingleGrid(size, size, torus=True)
         self.schedule = RandomActivation(self)
         self.running = True
@@ -45,8 +45,10 @@ class GTModel(Model):
         self.child_location = child_location
         # Specify the type of movement allowed for the agents
         self.movement = movement
-        # Specify the type of mutation
-        self.mut_type = mut_type
+        # Specify how the agents mutate
+        self.mutation_type = mutation_type
+        # The minimum total_energy needed for an agent to survive
+        self.death_threshold = death_threshold
 
         # Vars regarding which strategies to look for
         self.strategies_to_count = strategies_to_count
@@ -57,7 +59,7 @@ class GTModel(Model):
         agent_coords = self.random.sample(all_coords, i_n_agents)
 
         for _ in range(i_n_agents):
-            agent = GTAgent(self.agent_idx, self, i_strategy, i_energy)
+            agent = GTAgent(self.agent_idx, self, i_strategy.copy(), i_energy)
             self.agent_idx += 1
             self.schedule.add(agent)
             self.grid.place_agent(agent, agent_coords.pop())
@@ -67,6 +69,7 @@ class GTModel(Model):
             **{
                 'strategies': get_strategies,
                 'n_agents': total_n_agents,
+                'avg_agent_age': avg_agent_age,
                 'n_friendlier': n_friendlier,
                 'n_aggressive': n_aggressive,
                 'perc_cooperative_actions': perc_cooperative_actions,
@@ -87,8 +90,10 @@ class GTModel(Model):
     def time_to_die(self, agent):
         # There is a chance every iteration to die of old age: (A - T) / M
         # There is a 100% to die if the agents total energy reaches 0
-        prob_too_old = (agent.age - self.T) / self.M
-        return agent.total_energy < -20 or self.random.random() < prob_too_old
+        return (
+            agent.total_energy < self.death_threshold
+            or self.random.random() < (agent.age - self.T) / self.M
+        )
 
     def get_child_location(self, agent):
         if self.child_location == 'global':
@@ -111,8 +116,8 @@ class GTModel(Model):
             return self.random.choice(sorted(self.grid.empties))
 
     def maybe_mutate(self, strategy):
-        #Mutate by adding a random d to individual Pi's
-        if self.mut_type == 'numeric':
+        # Mutate by adding a random d to individual Pi's
+        if self.mutation_type == 'stochastic':
             # Copy the damn list
             new_strategy = strategy.copy()
             # There is a 20% chance of mutation
@@ -122,11 +127,18 @@ class GTModel(Model):
                     mutation = self.random.uniform(-self.d, self.d)
                     new_val = new_strategy[i] + mutation
                     # Keep probabilities in [0, 1]
-                    new_val = 0 if new_val < 0 else 1 if new_val > 1 else new_val
+                    new_val = (
+                        0 if new_val < 0
+                        else 1 if new_val > 1
+                        else new_val
+                    )
                     new_strategy[i] = new_val
-        #Mutate by choosing a random strategy from the list set
-        elif self.mut_type == 'stochastic':
-            new_strategy = random.choice(list(self.strategies_to_count.values()))
+
+        # Mutate by choosing a random strategy from the list set
+        elif self.mutation_type == 'fixed':
+            new_strategy = random.choice(
+                list(self.strategies_to_count.values())
+            )
 
         return new_strategy
 
@@ -166,10 +178,12 @@ class GTModel(Model):
             # Otherwise check if can reproduce
             else:
                 self.maybe_reproduce(agent)
+
         # Finally, step each agent
         self.schedule.step()
 
     def check_strategy(self, agent):
+        # Helper function to check which strategy an agent would count as
         def is_same(strategy, a_strategy):
             tol = self.count_tolerance
             return all(

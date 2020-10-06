@@ -16,13 +16,14 @@ class GTAgent(Agent):
             return
 
         if self.model.movement == 'global':
-            self.model.grid.move_agent(self, self.random.choice(sorted(self.model.grid.empties)))
+            self.model.grid.move_agent(
+                self, self.random.choice(sorted(self.model.grid.empties))
+            )
 
         if self.model.movement == 'local-free':
             # If the last interaction was positive, don't move
             if self.delta_energy >= 1:
                 return
-                
 
         if self.model.movement == 'local-prob':
             # Determine whether to move based on delta_energy
@@ -79,14 +80,13 @@ class GTAgent(Agent):
         # Get older
         self.age += 1
 
-        # Find a neighbor that has not acted yet, if any
+        # Interact with each neighbor and sum energy changes
         neighbors = self.model.grid.get_neighbors(
             self.pos,
             moore=False,
             include_center=False,
             radius=1,
         )
-        # Interact with each neighbor and sum energy changes
         interaction = None
         for opponent in neighbors:
             interaction = (self.action(), opponent.action())

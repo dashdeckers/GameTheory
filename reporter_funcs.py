@@ -2,6 +2,13 @@ def total_n_agents(model):
     return len(model.schedule.agents)
 
 
+def avg_agent_age(model):
+    return (
+        sum([agent.age for agent in model.schedule.agents])
+        / len(model.schedule.agents)
+    )
+
+
 def n_friendlier(model):
     return len([agent for agent in model.schedule.agents
                 if sum(agent.strategy)/4 >= 0.5])
@@ -22,7 +29,7 @@ def perc_cooperative_actions(model):
 
     non_coop_agents = [
         a for a in active_agents if a.prev_interaction[0] == 'C'
-    ]  #Non coop agents name but returning agents who did coop?
+    ]  # Non coop agents name but returning agents who did coop?
 
     return len(non_coop_agents) / len(active_agents)
 
