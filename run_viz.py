@@ -1,4 +1,5 @@
 import math
+import random
 
 from model import GTModel
 
@@ -14,29 +15,32 @@ params = {
     'size': 20,  # 20
     # Initial number of agents to place at the start of a run
     'i_n_agents': 60,  # 60  (supposed to naturally grow to avg 100)
-    # Initial strategy for every agent at the start of a run
-    'i_strategy': [0.5, 0.5, 0.5, 0.5],  # [0.5] * 4
     # Initial amount of energy to give each agent at the start of a run
     'i_energy': 0.5,  # ???
+    # Initial strategy for every agent at the start of a run
+    'i_strategy': [0.5, 0.5, 0.5, 0.5],  # [0.5] * 4
     # Constant for max population control (cost of surviving)
-    'k': -4,  # ???
+    'k': -3,  # -3 gives alpha=0 for 100 agents
     # Constant for controlling dying of old age (T+M == Maximum lifespan)
-    'T': 10,  # ???
+    'T': 50,  # ???
     # Minimum lifespan
-    'M': 5,  # ???
+    'M': 100,  # ???
     # Minimum energy level to reproduce
-    'p': 0.5,  # ???
+    'p': 2,  # ???
     # Mutation 'amplitude'
-    'd': 0.3,  # 0.1
+    'd': 0.05,  # 0.1
     # Whether to spawn children near parents or randomly
-    'child_location': 'local',  # 'global'
+    'child_location': 'local',  # 'local' or 'global'
     # Specify the type of movement allowed for the agents
-    'movement': 'local-prob',  # 'local-prob'
+    'movement': 'local-free', # 'local-prob', 'local-free', 'global' or 'none'
+    # Specify how agents mutate
+    'mut_type': 'stochastic', #'numeric' or 'stochastic'
     # Whether to print debug statements
-    'debug': True,
+    'debug': False, # 'True' or 'False'
 
     # Strategies to count
     'strategies_to_count': {
+            # 'RANDOM':   [0.5, 0.5, 0.5, 0.5],
             'ALLC':     [1, 1, 1, 1],
             'ALLD':     [0, 0, 0, 0],
             'TFT':      [1, 0, 1, 0],
@@ -55,7 +59,7 @@ params = {
             '1110':     [1, 1, 1, 0],
     },
     # Count tolerance
-    'count_tolerance': 0.3,
+    'count_tolerance': 0.01,
 }
 
 

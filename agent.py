@@ -16,12 +16,13 @@ class GTAgent(Agent):
             return
 
         if self.model.movement == 'global':
-            return self.random.choice(sorted(self.model.grid.empties))
+            self.model.grid.move_agent(self, self.random.choice(sorted(self.model.grid.empties)))
 
         if self.model.movement == 'local-free':
             # If the last interaction was positive, don't move
-            if self.delta_energy > 0:
+            if self.delta_energy >= 1:
                 return
+                
 
         if self.model.movement == 'local-prob':
             # Determine whether to move based on delta_energy
@@ -56,7 +57,8 @@ class GTAgent(Agent):
         if not self.prev_interaction:
             if self.random.random() < 0.5:
                 return 'C'
-            return 'D'
+            else:
+                return 'D'
 
         # Strategy: P(C|prev), where prev in [CC, CD, DC, DD]
         # Represented by a dictionary: {prev_interaction: P(C)}
@@ -68,7 +70,8 @@ class GTAgent(Agent):
 
         if self.random.random() < prob_dict[self.prev_interaction]:
             return 'C'
-        return 'D'
+        else:
+            return 'D'
 
     def interact(self):
         # Reset delta energy
@@ -83,7 +86,6 @@ class GTAgent(Agent):
             include_center=False,
             radius=1,
         )
-
         # Interact with each neighbor and sum energy changes
         interaction = None
         for opponent in neighbors:
@@ -94,8 +96,9 @@ class GTAgent(Agent):
         self.delta_energy -= self.model.alpha()
         self.total_energy += self.delta_energy
 
-        # Remember the last interaction (TODO: Seems arbitrary?)
-        self.prev_interaction = interaction
+        # Update the last interaction, if there was one
+        if interaction:
+            self.prev_interaction = interaction
 
     def step(self):
         self.interact()
