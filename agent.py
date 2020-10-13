@@ -10,6 +10,7 @@ class GTAgent(Agent):
         self.delta_energy = 0
         self.age = 0
         self.prev_interaction = None
+        self.nneighbors = 0 #Number of neighbors
 
     def move(self):
         if self.model.movement == 'none':
@@ -87,7 +88,10 @@ class GTAgent(Agent):
             include_center=False,
             radius=1,
         )
+        #Update number of neigbors
+        self.nneighbors = len(neighbors)
         interaction = None
+        
         for opponent in neighbors:
             interaction = (self.action(), opponent.action())
             self.delta_energy += self.model.payoff[interaction]

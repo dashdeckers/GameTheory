@@ -5,11 +5,13 @@ params = {
     # Initial number of agents to place at the start of a run
     'i_n_agents': 60,  # 60  (supposed to naturally grow to avg 100)
     # Initial amount of energy to give each agent at the start of a run
-    'i_energy': 0.5,  # ???
+    'i_energy': 1,  # ???
     # Initial strategy for every agent at the start of a run
     'i_strategy': [0.5, 0.5, 0.5, 0.5],  # [0.5] * 4
     # Constant for max population control (cost of surviving)
-    'k': -3,  # ??? (-3 gives alpha=0 for 100 agents)
+    'k': -3,  # ??? (-3 gives alpha=0 for 100 agents) 
+    #For 20x20 alpha=k + 4*DC*CC*N/400 
+    #N=100 -> a=k+DC*CC, DC*CC = 3 -> k=-3 for alpha=0 at 100 agents
     # Constant for controlling dying of old age (T+M == Maximum lifespan)
     'T': 50,  # ???
     # Minimum lifespan
@@ -17,13 +19,13 @@ params = {
     # Minimum energy level to reproduce
     'p': 2,  # ???
     # Mutation 'amplitude'
-    'd': 0.1,  # 0.1
+    'd': 0.2,  # 0.1
     # The minimum total_energy needed for an agent to survive
-    'death_threshold': 0,  # 0
+    'death_threshold': -1,  # 0
 
     # Whether to spawn children near parents or randomly
     # Must be in ['local' or 'global']
-    'child_location': 'global',
+    'child_location': 'local',
     # Specify the type of movement allowed for the agents
     # Must be in ['local-prob', 'local-free', 'global', 'none']
     'movement': 'local-prob',  # 'local-prob'
@@ -52,7 +54,7 @@ params = {
             '1110':     [1, 1, 1, 0],
     },
     # Count tolerance
-    'count_tolerance': 0.4,
+    'count_tolerance': 0.3,
 
     # Whether to print debug statements
     'debug': False,  # 'True' or 'False'

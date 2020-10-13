@@ -1,3 +1,4 @@
+
 def total_n_agents(model):
     return len(model.schedule.agents)
 
@@ -47,3 +48,10 @@ def strategy_counter_factory(strategy, tol):
                 for i in range(4))
         ])
     return strategy_counter
+
+def nneighbor_measure(model):
+    #Calculate the average number of neighbors div by the total number of agents
+    #Is a measure of how clustered agents are
+    #0.02 seems to be the threshold value for solid clusters.
+    list_nneighbors = [agent.nneighbors for agent in model.schedule.agents]
+    return sum(list_nneighbors)/len(list_nneighbors)**2

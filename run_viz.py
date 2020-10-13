@@ -47,11 +47,15 @@ strategy_chart = ChartModule([
     for label, color in
     zip(params['strategies_to_count'].keys(), strategy_colors)
 ])
+clustering_chart = ChartModule([
+    {'Label': 'nneighbors',
+     'Color': 'Red'},
+])
 
 
 server = ModularServer(
     GTModel,
-    [grid, total_chart, perc_chart, strategy_chart],
+    [grid, clustering_chart, total_chart, perc_chart, strategy_chart],
     'Prisoners Dilemma Model',
     params,
 )
