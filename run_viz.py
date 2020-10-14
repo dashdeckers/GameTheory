@@ -6,7 +6,7 @@ from parameters import params, strategy_colors
 from colour import Color
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
-from mesa.visualization.modules import ChartModule, PieChartModule
+from mesa.visualization.modules import ChartModule
 
 
 def agent_portrayal(agent):
@@ -17,7 +17,7 @@ def agent_portrayal(agent):
         return 1 / (1 + math.e ** -x)
 
     if agent.group_id is None:
-        agent_color = Color(rgb=(0, sigmoid(4 - sum(agent.strategy)), 0)).get_hex()
+        agent_color = Color(rgb=(0, sigmoid(sum(agent.strategy)), 0)).get_hex()
     else:
         agent_color = strategy_colors[agent.group_id]
 
