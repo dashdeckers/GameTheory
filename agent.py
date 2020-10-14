@@ -3,8 +3,9 @@ from pprint import pprint
 
 
 class GTAgent(Agent):
-    def __init__(self, unique_id, model, strategy, i_energy=0):
+    def __init__(self, unique_id, group_id, model, strategy, i_energy):
         super().__init__(unique_id, model)
+        self.group_id = group_id
         self.strategy = strategy
         self.total_energy = i_energy
         self.delta_energy = 0
@@ -93,10 +94,13 @@ class GTAgent(Agent):
 
         # Interact with each neighbor and sum energy changes
         interaction = None
-        
-        for opponent in neighbors:
-            interaction = (self.action(), opponent.action())
-            self.delta_energy += self.model.payoff[interaction]
+        for other in neighbors:
+            # If the neighbor is in the same group, no need for a PD game
+            if self.group_id is not None and other.group_id == self.group_id:
+                pass
+            else:
+                interaction = (self.action(), other.action())
+                self.delta_energy += self.model.payoff[interaction]
 
         # Subtract the cost of surviving and update total energy
         self.delta_energy -= self.model.alpha()

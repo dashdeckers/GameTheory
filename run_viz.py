@@ -16,11 +16,16 @@ def agent_portrayal(agent):
     def sigmoid(x):
         return 1 / (1 + math.e ** -x)
 
+    if agent.group_id is None:
+        agent_color = Color(rgb=(0, sigmoid(4 - sum(agent.strategy)), 0)).get_hex()
+    else:
+        agent_color = strategy_colors[agent.group_id]
+
     return {
         'Shape': 'circle',
         'Filled': 'true',
         'Layer': 0,
-        'Color': Color(rgb=(0, sigmoid(sum(agent.strategy)), 0)).get_hex(),
+        'Color': agent_color,
         'r': 0.5
     }
 

@@ -24,6 +24,11 @@ def plot_strategies(iterations, max_steps, step_data):
     for i in range(0, iterations):
         row_indices = slice(i * max_steps, (i+1) * max_steps)
         step_data[row_indices].drop(columns=cols).plot(color=strategy_colors)
+
+        # Trick to show an extra string on the legent
+        plt.plot([], [], ' ', label='CC|CD|DC|DD')
+        plt.legend()
+
         plt.title('Strategies over time')
         plt.show()
 

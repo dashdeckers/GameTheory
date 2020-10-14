@@ -16,13 +16,14 @@ class GTModel(Model):
     def __init__(self, debug, size, i_n_agents, i_strategy, i_energy,
                  child_location, movement, k, T, M, p, d,
                  strategies_to_count, count_tolerance, mutation_type,
-                 death_threshold):
+                 death_threshold, n_groups):
         self.grid = SingleGrid(size, size, torus=True)
         self.schedule = RandomActivation(self)
         self.running = True
         self.debug = debug
         self.size = size
         self.agent_idx = 0
+        self.i_energy = i_energy
 
         # Payoff matrix in the form (my_move, op_move) : my_reward
         self.payoff = {
@@ -59,7 +60,17 @@ class GTModel(Model):
         agent_coords = self.random.sample(all_coords, i_n_agents)
 
         for _ in range(i_n_agents):
-            agent = GTAgent(self.agent_idx, self, i_strategy.copy(), i_energy)
+            group_idx = (
+                None if n_groups is None
+                else self.random.choice(range(n_groups))
+            )
+            agent = GTAgent(
+                self.agent_idx,
+                group_idx,
+                self,
+                i_strategy.copy(),
+                i_energy
+            )
             self.agent_idx += 1
             self.schedule.add(agent)
             self.grid.place_agent(agent, agent_coords.pop())
@@ -148,7 +159,13 @@ class GTModel(Model):
         if agent.total_energy >= self.p:
             # Create the child
             new_strategy = self.maybe_mutate(agent.strategy)
-            child = GTAgent(self.agent_idx, self, new_strategy)
+            child = GTAgent(
+                self.agent_idx,
+                agent.group_id,
+                self,
+                new_strategy,
+                self.i_energy
+            )
             self.agent_idx += 1
 
             # Set parent and child energy levels to p/2
