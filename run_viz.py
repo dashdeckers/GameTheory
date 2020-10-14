@@ -48,7 +48,7 @@ strategy_chart = ChartModule([
     zip(params['strategies_to_count'].keys(), strategy_colors)
 ])
 clustering_chart = ChartModule([
-    {'Label': 'nneighbors',
+    {'Label': 'n_neighbors',
      'Color': 'Red'},
 ])
 

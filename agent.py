@@ -10,7 +10,7 @@ class GTAgent(Agent):
         self.delta_energy = 0
         self.age = 0
         self.prev_interaction = None
-        self.nneighbors = 0 #Number of neighbors
+        self.n_neighbors = 0
 
     def move(self):
         if self.model.movement == 'none':
@@ -81,15 +81,17 @@ class GTAgent(Agent):
         # Get older
         self.age += 1
 
-        # Interact with each neighbor and sum energy changes
+        # Get neighbors
         neighbors = self.model.grid.get_neighbors(
             self.pos,
             moore=False,
             include_center=False,
             radius=1,
         )
-        #Update number of neigbors
-        self.nneighbors = len(neighbors)
+        # Update number of neigbors
+        self.n_neighbors = len(neighbors)
+
+        # Interact with each neighbor and sum energy changes
         interaction = None
         
         for opponent in neighbors:

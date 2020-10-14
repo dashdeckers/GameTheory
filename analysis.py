@@ -17,7 +17,8 @@ def plot_strategies(iterations, max_steps, step_data):
     # Don't need these columns
     cols = [
         'perc_cooperative_actions', 'n_agents',
-        'n_friendlier', 'n_aggressive', 'avg_agent_age'
+        'n_friendlier', 'n_aggressive', 'avg_agent_age',
+        'n_neighbors',
     ]
 
     for i in range(0, iterations):
