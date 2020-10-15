@@ -4,7 +4,8 @@ import random
 from agent import GTAgent
 from reporter_funcs import (total_n_agents, n_aggressive, n_friendlier,
                             perc_cooperative_actions, strategy_counter_factory,
-                            get_strategies, avg_agent_age, n_neighbor_measure)
+                            get_strategies, avg_agent_age, n_neighbor_measure,
+                            avg_delta_energy)
 
 from mesa import Model
 from mesa.time import RandomActivation
@@ -85,6 +86,7 @@ class GTModel(Model):
                 'n_aggressive': n_aggressive,
                 'perc_cooperative_actions': perc_cooperative_actions,
                 'n_neighbors': n_neighbor_measure,
+                'avg_delta_energy': avg_delta_energy,
             }, **{
                 label: strategy_counter_factory(strategy, count_tolerance)
                 for label, strategy in strategies_to_count.items()
@@ -127,11 +129,11 @@ class GTModel(Model):
             # If no free cells in radius size/2 pick a random empty cell
             return self.random.choice(sorted(self.grid.empties))
 
-    def maybe_mutate(self, strategy):
+    def maybe_mutate(self, agent):
         # Mutate by adding a random d to individual Pi's
         if self.mutation_type == 'stochastic':
             # Copy the damn list
-            new_strategy = strategy.copy()
+            new_strategy = agent.strategy.copy()
             # There is a 20% chance of mutation
             if self.random.random() < 0.2:
                 # Each Pi is mutated uniformly by [-d, d]
@@ -151,6 +153,23 @@ class GTModel(Model):
             new_strategy = random.choice(
                 list(self.strategies_to_count.values())
             )
+            
+        elif self.mutation_type == 'gaussian_sentimental':
+            # Copy the damn list
+            new_strategy = agent.strategy.copy()
+            # There is a 20% chance of mutation
+            if self.random.random() < 0.2:
+                # Each Pi is mutated by a value drawn from a gaussian with mean=delta_energy
+                for i in range(4):
+                    mutation = self.random.normalvariate((agent.delta_energy+self.alpha())/14, self.d)
+                    new_val = new_strategy[i] + mutation
+                    # Keep probabilities in [0, 1]
+                    new_val = (
+                        0 if new_val < 0
+                        else 1 if new_val > 1
+                        else new_val
+                    )
+                    new_strategy[i] = new_val
 
         return new_strategy
 
@@ -158,7 +177,7 @@ class GTModel(Model):
         # If we have the energy to reproduce, do so
         if agent.total_energy >= self.p:
             # Create the child
-            new_strategy = self.maybe_mutate(agent.strategy)
+            new_strategy = self.maybe_mutate(agent)
             child = GTAgent(
                 self.agent_idx,
                 agent.group_id,

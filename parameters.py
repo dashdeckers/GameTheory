@@ -30,13 +30,13 @@ params = {
     'child_location': 'local',  # 'global'
     # Specify the type of movement allowed for the agents
     # Must be in ['local-prob', 'local-free', 'global', 'none']
-    'movement': 'local-free',  # 'local-prob'
+    'movement': 'local-prob',  # 'local-prob'
     # Specify how agents mutate
-    # Must be in ['fixed', 'stochastic']
-    'mutation_type': 'stochastic',  # 'stochastic'
+    # Must be in ['fixed', 'stochastic', 'gaussian_sentimental']
+    'mutation_type': 'gaussian_sentimental',  # 'stochastic'
     # The number of groups to create
     # Must be an integer >0 or None
-    'n_groups': None,  # None
+    'n_groups': 4,  # None
 
     # Strategies to count
     # P(C|S), where S in [CC, CD, DC, DD]

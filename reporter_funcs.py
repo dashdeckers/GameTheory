@@ -11,6 +11,14 @@ def avg_agent_age(model):
         / len(model.schedule.agents)
     )
 
+def avg_delta_energy(model):
+    if not model.schedule.agents:
+        return 0
+
+    return (
+        sum([agent.delta_energy for agent in model.schedule.agents])
+        / len(model.schedule.agents)
+    )
 
 def n_friendlier(model):
     return len([agent for agent in model.schedule.agents
@@ -24,14 +32,14 @@ def n_aggressive(model):
 
 def perc_cooperative_actions(model):
     active_agents = [
-        a for a in model.schedule.agents if a.prev_interaction is not None
+        a for a in model.schedule.agents if a.rece_interaction is not None
     ]
 
     if not active_agents:
         return 0
 
     non_coop_agents = [
-        a for a in active_agents if a.prev_interaction[0] == 'C'
+        a for a in active_agents if a.rece_interaction[0] == 'C'
     ]  # Non coop agents name but returning agents who did coop?
 
     return len(non_coop_agents) / len(active_agents)
@@ -60,4 +68,4 @@ def n_neighbor_measure(model):
         return 0
 
     list_n_neighbors = [agent.n_neighbors for agent in model.schedule.agents]
-    return sum(list_n_neighbors)/len(list_n_neighbors)**2
+    return sum(list_n_neighbors)/len(list_n_neighbors)

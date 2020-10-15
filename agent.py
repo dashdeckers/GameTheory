@@ -11,7 +11,9 @@ class GTAgent(Agent):
         self.delta_energy = 0
         self.age = 0
         self.prev_interaction = None
+        self.rece_interaction = None
         self.n_neighbors = 0
+        
 
     def move(self):
         if self.model.movement == 'none':
@@ -97,7 +99,8 @@ class GTAgent(Agent):
         for other in neighbors:
             # If the neighbor is in the same group, no need for a PD game
             if self.group_id is not None and other.group_id == self.group_id:
-                pass
+                cooperation = ('C','C')
+                #self.delta_energy += self.model.payoff[cooperation]
             else:
                 interaction = (self.action(), other.action())
                 self.delta_energy += self.model.payoff[interaction]
@@ -109,6 +112,7 @@ class GTAgent(Agent):
         # Update the last interaction, if there was one
         if interaction:
             self.prev_interaction = interaction
+        self.rece_interaction = interaction
 
     def step(self):
         self.interact()
