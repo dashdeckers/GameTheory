@@ -71,20 +71,29 @@ def plot(params, data, step_data, plot='strategies', average=True):
         # assert len(setting_splits) == params['n_settings']
 
         for idx, setting in enumerate(setting_splits):
+            # get the parameter values we are plotting for
+            data_idx = idx * params['iterations']
+            setting_values = list(
+                data.loc[data_idx][params['var_params'].keys()].items()
+            )
             # plot the mean across iterations
             setting[columns].groupby(
                 setting.index % params['max_steps']
             ).mean().plot(color=strategy_colors)
-            plt.title(f'Showing average {plot}')
+            plt.title(f'Showing average {plot} for:\n{setting_values}')
             plt.legend(ncol=2)
             plt.show()
 
     else:
         for i in range(0, params['iterations'] * params['n_settings']):
+            # get the parameter values we are plotting for
+            setting_values = list(
+                data.loc[i][params['var_params'].keys()].items()
+            )
             # plot the values
             rows = slice(i * params['max_steps'], (i+1) * params['max_steps'])
             step_data[rows][columns].plot(color=strategy_colors)
-            plt.title(f'Showing {plot}')
+            plt.title(f'Showing {plot} for:\n{setting_values}')
             plt.legend(ncol=2)
             plt.show()
 

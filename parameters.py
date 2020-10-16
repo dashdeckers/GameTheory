@@ -82,8 +82,6 @@ max_steps = 5000
 
 # Needs at least one item even if its a single value: [60]
 var_params = {
-    'i_n_agents': [100],
-    # 'd': [0.1],
-    # 'k': range(-2, 1),
-    # 'p': [i/10 for i in range(1, 11)],
+    'p': [1, 2, 3, 4],
+    'death_threshold': [-20, -10, -5, -1, 0],
 }
