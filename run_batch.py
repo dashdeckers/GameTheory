@@ -11,6 +11,7 @@ from parameters import params, var_params, iterations, max_steps, run_name
 from mesa.batchrunner import BatchRunner
 from mesa.datacollection import DataCollector
 import pandas as pd
+import json
 
 
 # Don't change this
@@ -46,5 +47,12 @@ for i in range(len(data['DC'])):
 
 
 # Save data
-data.to_csv(f'data_{run_name}.csv')
-step_data.to_csv(f'step_data_{run_name}.csv')
+data.to_csv(f'{run_name}_data.csv')
+step_data.to_csv(f'{run_name}_step_data.csv')
+with open(f'{run_name}_config.json', 'w') as file:
+    json.dump({
+        'var_params': var_params,
+        'iterations': iterations,
+        'max_steps': max_steps,
+        'run_name': run_name,
+    }, file)

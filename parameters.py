@@ -33,10 +33,10 @@ params = {
     'movement': 'local-prob',  # 'local-prob'
     # Specify how agents mutate
     # Must be in ['fixed', 'stochastic', 'gaussian_sentimental']
-    'mutation_type': 'gaussian_sentimental',  # 'stochastic'
+    'mutation_type': 'stochastic',  # 'stochastic'
     # The number of groups to create
     # Must be an integer >0 or None
-    'n_groups': 4,  # None
+    'n_groups': None,  # None
 
     # Strategies to count
     # P(C|S), where S in [CC, CD, DC, DD]
@@ -76,13 +76,13 @@ strategy_colors = [
 ]
 
 # Batch run parameters
-run_name = 'PAPER_REPRODUCED'
-iterations = 3
+run_name = 'TEST'
+iterations = 50
 max_steps = 5000
 
 # Needs at least one item even if its a single value: [60]
 var_params = {
-    'i_n_agents': [60],
+    'i_n_agents': [100],
     # 'd': [0.1],
     # 'k': range(-2, 1),
     # 'p': [i/10 for i in range(1, 11)],
