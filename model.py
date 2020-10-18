@@ -153,15 +153,18 @@ class GTModel(Model):
             new_strategy = random.choice(
                 list(self.strategies_to_count.values())
             )
-            
+
         elif self.mutation_type == 'gaussian_sentimental':
             # Copy the damn list
             new_strategy = agent.strategy.copy()
             # There is a 20% chance of mutation
             if self.random.random() < 0.2:
-                # Each Pi is mutated by a value drawn from a gaussian with mean=delta_energy
+                # Each Pi is mutated by a value drawn from a gaussian
+                # with mean=delta_energy
                 for i in range(4):
-                    mutation = self.random.normalvariate((agent.delta_energy+self.alpha())/14, self.d)
+                    mutation = self.random.normalvariate(
+                        (agent.delta_energy+self.alpha())/14, self.d
+                    )
                     new_val = new_strategy[i] + mutation
                     # Keep probabilities in [0, 1]
                     new_val = (

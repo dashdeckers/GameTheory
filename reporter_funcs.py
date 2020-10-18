@@ -11,6 +11,7 @@ def avg_agent_age(model):
         / len(model.schedule.agents)
     )
 
+
 def avg_delta_energy(model):
     if not model.schedule.agents:
         return 0
@@ -19,6 +20,7 @@ def avg_delta_energy(model):
         sum([agent.delta_energy for agent in model.schedule.agents])
         / len(model.schedule.agents)
     )
+
 
 def n_friendlier(model):
     return len([agent for agent in model.schedule.agents

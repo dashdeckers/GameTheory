@@ -64,7 +64,8 @@ dE_chart = ChartModule([
 
 server = ModularServer(
     GTModel,
-    [grid, clustering_chart, total_chart, perc_chart, strategy_chart, dE_chart],
+    [grid, clustering_chart, total_chart,
+     perc_chart, strategy_chart, dE_chart],
     'Prisoners Dilemma Model',
     params,
 )
