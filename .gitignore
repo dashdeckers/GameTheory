@@ -1,6 +1,5 @@
 # Data files
 *.csv
-*.json
 
 # Sublime stuff
 *.sublime-workspace
