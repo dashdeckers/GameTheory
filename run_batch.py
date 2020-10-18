@@ -55,6 +55,7 @@ data.to_csv(data_folder / 'data.csv')
 step_data.to_csv(data_folder / 'step_data.csv')
 with open(data_folder / 'config.json', 'w') as file:
     json.dump({
+        'params': params,
         'var_params': var_params,
         'iterations': iterations,
         'max_steps': max_steps,
