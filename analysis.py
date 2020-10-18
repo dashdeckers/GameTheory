@@ -84,6 +84,10 @@ def plot(params, plot_list='strategies', average=True):
             ).mean().plot(color=strategy_colors)
             plt.title(f'Showing average {plot_list} for:\n{setting_values}')
             plt.legend(ncol=2)
+            if 'perc_cooperative_actions' in plot_list:
+                plt.ylim(0, 1)
+            if plot_list == 'strategies':
+                plt.ylim(0, 50)
             plt.savefig(plot_folder / (str(plot_list) + str(setting_values)))
             plt.show()
 
@@ -105,8 +109,8 @@ def plot(params, plot_list='strategies', average=True):
 
 
 if __name__ == '__main__':
-    # run_name = 'TEST'  # noqa
-    columns = ['perc_cooperative_actions']  # , 'avg_delta_energy']
+    run_name = 'BIG_RUN_P'  # noqa
+    columns = ['perc_cooperative_actions']
     params = get_params(run_name)
 
     plot(params, plot_list=columns)
