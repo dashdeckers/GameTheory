@@ -8,11 +8,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import json
 import math
+from pathlib import Path
 
 
 def get_params(run_name):
     # Load the config file
-    with open(f'{run_name}_config.json', 'r') as file:
+    with open(Path() / run_name / 'config.json', 'r') as file:
         params = json.load(file)
 
     # How many different settings? Every possible combination of settings
@@ -28,9 +29,9 @@ def get_data(params, column_filter=None):
     run_name = params['run_name']
     chunksize = params['max_steps'] * params['iterations']
 
-    data = pd.read_csv(f'{run_name}_data.csv')
+    data = pd.read_csv(Path() / run_name / 'data.csv')
     for step_data_chunk in pd.read_csv(
-                f'{run_name}_step_data.csv',
+                Path() / run_name / 'step_data.csv',
                 usecols=column_filter,
                 chunksize=chunksize,
             ):
@@ -62,6 +63,12 @@ def plot(params, plot_list='strategies', average=True):
         else:
             return column in plot_list
 
+    plot_folder = Path() / params['run_name'] / 'plots'
+    try:
+        plot_folder.mkdir(parents=False, exist_ok=False)
+    except FileExistsError:
+        pass
+
     data_iter = get_data(params, column_filter=column_filter)
     for idx, (data, step_data) in enumerate(data_iter):
 
@@ -77,6 +84,7 @@ def plot(params, plot_list='strategies', average=True):
             ).mean().plot(color=strategy_colors)
             plt.title(f'Showing average {plot_list} for:\n{setting_values}')
             plt.legend(ncol=2)
+            plt.savefig(plot_folder / (str(plot_list) + str(setting_values)))
             plt.show()
 
         else:
@@ -97,8 +105,8 @@ def plot(params, plot_list='strategies', average=True):
 
 
 if __name__ == '__main__':
-    # run_name = 'density'  # noqa
-    columns = ['perc_cooperative_actions', 'avg_delta_energy']
+    # run_name = 'TEST'  # noqa
+    columns = ['perc_cooperative_actions']  # , 'avg_delta_energy']
     params = get_params(run_name)
 
     plot(params, plot_list=columns)

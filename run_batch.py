@@ -12,6 +12,7 @@ from mesa.batchrunner import BatchRunner
 from mesa.datacollection import DataCollector
 import pandas as pd
 import json
+from pathlib import Path
 
 
 # Don't change this
@@ -47,9 +48,12 @@ for i in range(len(data['DC'])):
 
 
 # Save data
-data.to_csv(f'{run_name}_data.csv')
-step_data.to_csv(f'{run_name}_step_data.csv')
-with open(f'{run_name}_config.json', 'w') as file:
+data_folder = Path() / run_name
+data_folder.mkdir(parents=True, exist_ok=True)
+
+data.to_csv(data_folder / 'data.csv')
+step_data.to_csv(data_folder / 'step_data.csv')
+with open(data_folder / 'config.json', 'w') as file:
     json.dump({
         'var_params': var_params,
         'iterations': iterations,
