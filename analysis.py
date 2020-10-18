@@ -109,7 +109,7 @@ def plot(params, plot_list='strategies', average=True):
 
 
 if __name__ == '__main__':
-    run_name = 'BIG_RUN_P'  # noqa
+    # run_name = 'BIG_RUN_P'  # noqa
     columns = ['perc_cooperative_actions']
     params = get_params(run_name)
 
