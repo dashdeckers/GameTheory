@@ -88,7 +88,8 @@ def plot(params, plot_list='strategies', average=True):
                 plt.ylim(0, 1)
             if plot_list == 'strategies':
                 plt.ylim(0, 50)
-            plt.savefig(plot_folder / (str(plot_list) + str(setting_values)))
+            filename = str(plot_list) + str(setting_values).replace('.', '_')
+            plt.savefig(plot_folder / filename)
             plt.show()
 
         else:
