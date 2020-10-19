@@ -76,12 +76,12 @@ strategy_colors = [
 ]
 
 # Batch run parameters
-run_name = 'TEST'
+run_name = 'p=4_DT_sweep'
 iterations = 50
 max_steps = 5000
 
 # Needs at least one item even if its a single value: [60]
 var_params = {
-    'p': [1, 2, 3, 4],
-    'death_threshold': [-20, -10, -5, -1, 0],
+    'p': [4],
+    'death_threshold': [-5, -1, 0],
 }
