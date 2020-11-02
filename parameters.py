@@ -19,7 +19,7 @@ params = {
     # Minimum lifespan
     'M': 100,  # ???
     # Minimum energy level to reproduce
-    'p': 4,  # ???
+    'p': 2,  # ???
     # Mutation 'amplitude'
     'd': 0.2,  # 0.1
     # The minimum total_energy needed for an agent to survive
@@ -76,12 +76,11 @@ strategy_colors = [
 ]
 
 # Batch run parameters
-run_name = 'Axelrod_matrix'
+run_name = 'Memory'
 iterations = 50
 max_steps = 5000
 
 # Needs at least one item even if its a single value: [60]
 var_params = {
-    'p': [4],
-    'death_threshold': [0],
+    'p': [2, 4],
 }
