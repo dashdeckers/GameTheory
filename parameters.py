@@ -11,7 +11,7 @@ params = {
     # Initial strategy for every agent at the start of a run
     'i_strategy': [0.5, 0.5, 0.5, 0.5],  # [0.5] * 4
     # Constant for max population control (cost of surviving)
-    'k': -8,  # ??? (-3 gives alpha=0 for 100 agents)
+    'k': -3,  # ??? (-3 gives alpha=0 for 100 agents)
     # For 20x20 alpha=k + 4*DC*CC*N/400
     # N=100 -> a=k+DC*CC, DC*CC = 3 -> k=-3 for alpha=0 at 100 agents
     # Constant for controlling dying of old age (T+M == Maximum lifespan)
@@ -30,7 +30,7 @@ params = {
     'child_location': 'local',  # 'global'
     # Specify the type of movement allowed for the agents
     # Must be in ['local-prob', 'local-free', 'global', 'none']
-    'movement': 'local-free',  # 'local-prob'
+    'movement': 'local-prob',  # 'local-prob'
     # Specify how agents mutate
     # Must be in ['fixed', 'stochastic', 'gaussian_sentimental']
     'mutation_type': 'stochastic',  # 'stochastic'

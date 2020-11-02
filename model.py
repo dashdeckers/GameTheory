@@ -28,10 +28,10 @@ class GTModel(Model):
 
         # Payoff matrix in the form (my_move, op_move) : my_reward
         self.payoff = {
-            ('C', 'C'): 3,
-            ('C', 'D'): 0,
-            ('D', 'C'): 5,
-            ('D', 'D'): 1,
+            ('C', 'C'): 1,
+            ('C', 'D'): -3,
+            ('D', 'C'): 3,
+            ('D', 'D'): -1,
         }
         # Constant for max population control (cost of surviving)
         self.k = k
