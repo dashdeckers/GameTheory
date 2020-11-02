@@ -9,6 +9,7 @@ import pandas as pd
 import json
 import math
 from pathlib import Path
+import gc
 
 
 def get_params(run_name):
@@ -35,6 +36,8 @@ def get_data(params, column_filter=None):
                 usecols=column_filter,
                 chunksize=chunksize,
             ):
+
+        gc.collect()
 
         # Fix first column bug in case it is a problem
         first_column = step_data_chunk.columns.values[0]
