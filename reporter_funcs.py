@@ -34,14 +34,14 @@ def n_aggressive(model):
 
 def perc_cooperative_actions(model):
     active_agents = [
-        a for a in model.schedule.agents if a.rece_interaction is not None
+        a for a in model.schedule.agents if a.last_interaction is not None
     ]
 
     if not active_agents:
         return 0
 
     coop_agents = [
-        a for a in active_agents if a.rece_interaction[0] == 'C'
+        a for a in active_agents if a.last_interaction[0] == 'C'
     ]
 
     return len(coop_agents) / len(active_agents)

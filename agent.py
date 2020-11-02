@@ -10,8 +10,8 @@ class GTAgent(Agent):
         self.total_energy = i_energy
         self.delta_energy = 0
         self.age = 0
-        self.prev_interaction = None
-        self.rece_interaction = None
+        self.last_interaction = None
+        self.memory = {}
         self.n_neighbors = 0
 
     def move(self):
@@ -56,26 +56,24 @@ class GTAgent(Agent):
         new_position = self.random.choice(possible_steps)
         self.model.grid.move_agent(self, new_position)
 
-    def action(self):
+    def action(self, other):
         # Initial move should be random to remove bias
-        if not self.prev_interaction:
+        if other.unique_id not in self.memory:
             if self.random.random() < 0.5:
                 return 'C'
-            else:
-                return 'D'
+            return 'D'
 
         # Strategy: P(C|prev), where prev in [CC, CD, DC, DD]
-        # Represented by a dictionary: {prev_interaction: P(C)}
+        # Represented by a dictionary: {prev: P(C)}
         prob_dict = {
             interaction: p for interaction, p in
             zip([('C', 'C'), ('C', 'D'), ('D', 'C'), ('D', 'D')],
                 self.strategy)
         }
 
-        if self.random.random() < prob_dict[self.prev_interaction]:
+        if self.random.random() < prob_dict[self.memory[other.unique_id]]:
             return 'C'
-        else:
-            return 'D'
+        return 'D'
 
     def interact(self):
         # Reset delta energy
@@ -96,23 +94,16 @@ class GTAgent(Agent):
         # Interact with each neighbor and sum energy changes
         interaction = None
         for other in neighbors:
-            # If the neighbor is in the same group, no need for a PD game
-            if self.group_id is not None and other.group_id == self.group_id:
-                # cooperation = ('C', 'C')
-                # self.delta_energy += self.model.payoff[cooperation]
-                pass
-            else:
-                interaction = (self.action(), other.action())
-                self.delta_energy += self.model.payoff[interaction]
+            interaction = (self.action(other), other.action(self))
+            self.memory[other.unique_id] = interaction
+            self.delta_energy += self.model.payoff[interaction]
 
         # Subtract the cost of surviving and update total energy
         self.delta_energy -= self.model.alpha()
         self.total_energy += self.delta_energy
 
         # Update the last interaction, if there was one
-        if interaction:
-            self.prev_interaction = interaction
-        self.rece_interaction = interaction
+        self.last_interaction = interaction
 
     def step(self):
         self.interact()
