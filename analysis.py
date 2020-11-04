@@ -37,8 +37,6 @@ def get_data(params, column_filter=None):
                 chunksize=chunksize,
             ):
 
-        gc.collect()
-
         # Fix first column bug in case it is a problem
         first_column = step_data_chunk.columns.values[0]
         if first_column == 'Unnamed: 0':
@@ -111,9 +109,12 @@ def plot(params, plot_list='strategies', average=True):
                 plt.legend(ncol=2)
                 plt.show()
 
+        del data, step_data
+        gc.collect()
+
 
 if __name__ == '__main__':
-    # run_name = 'BIG_RUN_P'  # noqa
+    run_name = 'p=4_DT_sweep'  # noqa
     columns = ['perc_cooperative_actions']
     params = get_params(run_name)
 
