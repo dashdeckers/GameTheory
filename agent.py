@@ -12,6 +12,8 @@ class GTAgent(Agent):
         self.age = 0
         self.prev_interaction = None
         self.rece_interaction = None
+        self.NCactions = 0 
+        self.Nactions = 0
         self.n_neighbors = 0
 
     def move(self):
@@ -82,6 +84,9 @@ class GTAgent(Agent):
         self.delta_energy = 0
         # Get older
         self.age += 1
+        #Reset action counter
+        self.NCactions = 0 
+        self.Nactions = 0
 
         # Get neighbors
         neighbors = self.model.grid.get_neighbors(
@@ -104,6 +109,10 @@ class GTAgent(Agent):
             else:
                 interaction = (self.action(), other.action())
                 self.delta_energy += self.model.payoff[interaction]
+                #Count the interaction
+                if interaction[0] == 'C':
+                    self.NCactions += 1
+                self.Nactions += 1
 
         # Subtract the cost of surviving and update total energy
         self.delta_energy -= self.model.alpha()
