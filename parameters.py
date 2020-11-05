@@ -21,7 +21,7 @@ params = {
     # Minimum energy level to reproduce
     'p': 3,  # ???
     # Mutation 'amplitude'
-    'd': 0.3,  # 0.1
+    'd': 0.2,  # 0.1
     # The minimum total_energy needed for an agent to survive
     'death_threshold': -1,  # 0
 

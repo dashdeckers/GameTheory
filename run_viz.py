@@ -60,11 +60,17 @@ dE_chart = ChartModule([
     {'Label': 'avg_delta_energy',
      'Color': 'Blue'},
 ])
+interaction_chart = ChartModule([
+    {'Label': 'lin_fit_NC',
+     'Color': 'Olive'},
+    {'Label': 'lin_fit_NC_intc',
+     'Color': 'Blue'},
+])
 
 
 server = ModularServer(
     GTModel,
-    [grid, clustering_chart, total_chart,
+    [grid, interaction_chart, clustering_chart, total_chart,
      perc_chart, strategy_chart, dE_chart],
     'Prisoners Dilemma Model',
     params,

@@ -1,6 +1,6 @@
 from mesa import Agent
 from pprint import pprint
-
+import numpy as np
 
 class GTAgent(Agent):
     def __init__(self, unique_id, group_id, model, strategy, i_energy):
@@ -14,6 +14,7 @@ class GTAgent(Agent):
         self.rece_interaction = None
         self.NCactions = 0 
         self.Nactions = 0
+        self.Ninteractions = np.zeros(4)
         self.n_neighbors = 0
 
     def move(self):
@@ -84,9 +85,10 @@ class GTAgent(Agent):
         self.delta_energy = 0
         # Get older
         self.age += 1
-        #Reset action counter
+        #Reset action counters
         self.NCactions = 0 
         self.Nactions = 0
+        self.Ninteractions = np.zeros(4)
 
         # Get neighbors
         neighbors = self.model.grid.get_neighbors(
@@ -103,17 +105,23 @@ class GTAgent(Agent):
         for other in neighbors:
             # If the neighbor is in the same group, no need for a PD game
             if self.group_id is not None and other.group_id == self.group_id:
-                # cooperation = ('C', 'C')
-                # self.delta_energy += self.model.payoff[cooperation]
+                interaction = ('C', 'C')
+                self.delta_energy += self.model.payoff[interaction]
                 pass
             else:
                 interaction = (self.action(), other.action())
                 self.delta_energy += self.model.payoff[interaction]
-                #Count the interaction
-                if interaction[0] == 'C':
-                    self.NCactions += 1
-                self.Nactions += 1
-
+                
+            #Count the interactions
+            if interaction == ('C','C'):
+                self.Ninteractions[0] += 1
+            elif interaction == ('C','D'):
+                self.Ninteractions[1] += 1
+            elif interaction == ('D','C'):
+                self.Ninteractions[2] += 1
+            elif interaction == ('D','D'):
+                self.Ninteractions[3] += 1
+                
         # Subtract the cost of surviving and update total energy
         self.delta_energy -= self.model.alpha()
         self.total_energy += self.delta_energy
@@ -122,6 +130,10 @@ class GTAgent(Agent):
         if interaction:
             self.prev_interaction = interaction
         self.rece_interaction = interaction
+        
+        #Count number of (cooperative) actions
+        self.NCactions = sum(self.Ninteractions[:2])
+        self.Nactions = sum(self.Ninteractions)
 
     def step(self):
         self.interact()
