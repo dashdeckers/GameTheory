@@ -101,16 +101,17 @@ def coop_per_neig(model):
         return 0
     
     number_coop_actions = [
-        a.NCactions for a in active_agents
+        a.NCactions for a in active_agents if a.n_neighbors != 0
     ]
     number_neighbors = [
-        a.n_neighbors for a in active_agents
+        a.n_neighbors for a in active_agents if a.n_neighbors != 0
     ]
         
-    def linear(x, a, b):
+    def lin(x, a, b):
         return a*x + b
         
-    return optimize.curve_fit(linear, number_neighbors, number_coop_actions)[0][0]
+    return optimize.curve_fit(lin, number_neighbors, number_coop_actions)[0][0]
+
 
 def coop_per_neig_intc(model):
     import scipy.optimize as optimize
@@ -123,15 +124,15 @@ def coop_per_neig_intc(model):
         return 0
     
     number_coop_actions = [
-        a.NCactions for a in active_agents
+        a.NCactions for a in active_agents if a.n_neighbors != 0
     ]
     number_neighbors = [
-        a.n_neighbors for a in active_agents
+        a.n_neighbors for a in active_agents if a.n_neighbors != 0
     ]
         
-    def linear(x, a, b):
+    def lin(x, a, b):
         return a*x + b
-        
-    return optimize.curve_fit(linear, number_neighbors, number_coop_actions)[0][1]
     
+    return optimize.curve_fit(lin, number_neighbors, number_coop_actions)[0][1]
+
     
