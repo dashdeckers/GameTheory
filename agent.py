@@ -12,9 +12,9 @@ class GTAgent(Agent):
         self.delta_energy = 0
         self.age = 0
         self.last_interaction = None
+        self.rece_interaction = None
         self.memory = {}
         self.n_neighbors = 0
-        self.Ninteractions = np.zeros(4)
         self.NCactions = 0
         self.Nactions = 0
 
@@ -85,7 +85,7 @@ class GTAgent(Agent):
         # Get older
         self.age += 1
         
-        self.Ninteractions = np.zeros(4)
+        self.rece_interaction = None
         self.NCactions = 0
         self.Nactions = 0
 
@@ -108,22 +108,19 @@ class GTAgent(Agent):
             
             #Count the interactions
             if interaction == ('C','C'):
-                self.Ninteractions[0] += 1
+                self.NCactions += 1
             elif interaction == ('C','D'):
-                self.Ninteractions[1] += 1
-            elif interaction == ('D','C'):
-                self.Ninteractions[2] += 1
-            elif interaction == ('D','D'):
-                self.Ninteractions[3] += 1
+                self.NCactions += 1
                 
-        self.NCactions = sum(self.Ninteractions[:2])
-        self.Nactions = sum(self.Ninteractions)
+            self.Nactions += 1
 
         # Subtract the cost of surviving and update total energy
         self.delta_energy -= self.model.alpha()
         self.total_energy += self.delta_energy
 
         # Update the last interaction, if there was one
+        if interaction:
+            self.rece_interaction = interaction
         self.last_interaction = interaction
 
     def step(self):
