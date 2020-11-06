@@ -40,13 +40,11 @@ def perc_cooperative_actions(model):
     if not active_agents:
         return 0
 
-    sum_each_action = sum(
-        [a.Ninteractions for a in active_agents]
-        )
+    num_coop_actions = sum(a.NCactions for a in active_agents)
+    num_tot_actions = sum(a.Nactions for a in active_agents)
+
     
-    sum_all_actions = sum(sum_each_action)
-    
-    return sum_each_action[:2] / sum_all_actions
+    return num_coop_actions / num_tot_actions
 
 
 def get_strategies(model):
