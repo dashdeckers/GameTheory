@@ -5,7 +5,7 @@ from agent import GTAgent
 from reporter_funcs import (total_n_agents, n_aggressive, n_friendlier,
                             perc_cooperative_actions, strategy_counter_factory,
                             get_strategies, avg_agent_age, n_neighbor_measure,
-                            avg_delta_energy)
+                            avg_delta_energy, coop_per_neig, coop_per_neig_intc)
 
 from mesa import Model
 from mesa.time import RandomActivation
@@ -87,6 +87,8 @@ class GTModel(Model):
                 'perc_cooperative_actions': perc_cooperative_actions,
                 'n_neighbors': n_neighbor_measure,
                 'avg_delta_energy': avg_delta_energy,
+                'gradient_coop_neighbor': coop_per_neig,
+                'intercept_coop_neighbor': coop_per_neig_intc,
             }, **{
                 label: strategy_counter_factory(strategy, count_tolerance)
                 for label, strategy in strategies_to_count.items()
