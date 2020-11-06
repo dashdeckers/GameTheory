@@ -93,19 +93,15 @@ def perc_CC_interactions(model):
 def coop_per_neig(model):
     import scipy.optimize as optimize
     
-    active_agents = [
-        a for a in model.schedule.agents if a.rece_interaction is not None
-    ]
-    
-    if not active_agents:
-        return 0
-    
     number_coop_actions = [
-        a.NCactions for a in active_agents if a.n_neighbors != 0
+        a.NCactions for a in model.schedule.agents if a.n_neighbors != 0
     ]
     number_neighbors = [
-        a.n_neighbors for a in active_agents if a.n_neighbors != 0
+        a.n_neighbors for a in model.schedule.agents if a.n_neighbors != 0
     ]
+    
+    if not number_neighbors:
+        return 0
         
     def lin(x, a, b):
         return a*x + b
@@ -116,20 +112,16 @@ def coop_per_neig(model):
 def coop_per_neig_intc(model):
     import scipy.optimize as optimize
     
-    active_agents = [
-        a for a in model.schedule.agents if a.rece_interaction is not None
-    ]
-    
-    if not active_agents:
-        return 0
-    
     number_coop_actions = [
-        a.NCactions for a in active_agents if a.n_neighbors != 0
+        a.NCactions for a in model.schedule.agents if a.n_neighbors != 0
     ]
     number_neighbors = [
-        a.n_neighbors for a in active_agents if a.n_neighbors != 0
+        a.n_neighbors for a in model.schedule.agents if a.n_neighbors != 0
     ]
         
+    if not number_neighbors:
+        return 0
+    
     def lin(x, a, b):
         return a*x + b
     
