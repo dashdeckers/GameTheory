@@ -1,4 +1,5 @@
 from mesa import Agent
+import numpy as np
 from pprint import pprint
 
 
@@ -13,6 +14,8 @@ class GTAgent(Agent):
         self.last_interaction = None
         self.memory = {}
         self.n_neighbors = 0
+        self.Ninteractions = np.zeros(4)
+        self.NCactions = 0
 
     def move(self):
         if self.model.movement == 'none':
@@ -97,6 +100,18 @@ class GTAgent(Agent):
             interaction = (self.action(other), other.action(self))
             self.memory[other.unique_id] = interaction
             self.delta_energy += self.model.payoff[interaction]
+            
+            #Count the interactions
+            if interaction == ('C','C'):
+                self.Ninteractions[0] += 1
+            elif interaction == ('C','D'):
+                self.Ninteractions[1] += 1
+            elif interaction == ('D','C'):
+                self.Ninteractions[2] += 1
+            elif interaction == ('D','D'):
+                self.Ninteractions[3] += 1
+                
+        self.NCactions = sum(self.Ninteractions[:2])
 
         # Subtract the cost of surviving and update total energy
         self.delta_energy -= self.model.alpha()
