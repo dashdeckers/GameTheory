@@ -34,17 +34,19 @@ def n_aggressive(model):
 
 def perc_cooperative_actions(model):
     active_agents = [
-        a for a in model.schedule.agents if a.last_interaction is not None
+        a for a in model.schedule.agents if a.rece_interaction is not None
     ]
 
     if not active_agents:
         return 0
 
-    coop_agents = [
-        a for a in active_agents if a.last_interaction[0] == 'C'
-    ]
-
-    return len(coop_agents) / len(active_agents)
+    sum_each_action = sum(
+        [a.Ninteractions for a in active_agents]
+        )
+    
+    sum_all_actions = sum(sum_each_action)
+    
+    return sum_each_action[:2] / sum_all_actions
 
 
 def get_strategies(model):
@@ -73,19 +75,15 @@ def n_neighbor_measure(model):
 def coop_per_neig(model):
     import scipy.optimize as optimize
     
-    active_agents = [
-        a for a in model.schedule.agents if a.rece_interaction is not None
-    ]
-    
-    if not active_agents:
-        return 0
-    
     number_coop_actions = [
-        a.NCactions for a in active_agents if a.n_neighbors != 0
+        a.NCactions for a in model.schedule.agents if a.n_neighbors != 0
     ]
     number_neighbors = [
-        a.n_neighbors for a in active_agents if a.n_neighbors != 0
+        a.n_neighbors for a in model.schedule.agents if a.n_neighbors != 0
     ]
+    
+    if not number_neighbors:
+        return 0
         
     def lin(x, a, b):
         return a*x + b
@@ -96,19 +94,15 @@ def coop_per_neig(model):
 def coop_per_neig_intc(model):
     import scipy.optimize as optimize
     
-    active_agents = [
-        a for a in model.schedule.agents if a.rece_interaction is not None
-    ]
-    
-    if not active_agents:
-        return 0
-    
     number_coop_actions = [
-        a.NCactions for a in active_agents if a.n_neighbors != 0
+        a.NCactions for a in model.schedule.agents if a.n_neighbors != 0
     ]
     number_neighbors = [
-        a.n_neighbors for a in active_agents if a.n_neighbors != 0
+        a.n_neighbors for a in model.schedule.agents if a.n_neighbors != 0
     ]
+    
+    if not number_neighbors:
+        return 0
         
     def lin(x, a, b):
         return a*x + b
