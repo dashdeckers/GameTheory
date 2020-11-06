@@ -64,10 +64,53 @@ def strategy_counter_factory(strategy, tol):
 
 def n_neighbor_measure(model):
     # Calculate the avg number of neighbors div by the total number of agents
-    # Is a measure of how clustered agents are
-    # 0.02 seems to be the threshold value for solid clusters.
     if not model.schedule.agents:
         return 0
 
     list_n_neighbors = [agent.n_neighbors for agent in model.schedule.agents]
     return sum(list_n_neighbors)/len(list_n_neighbors)
+
+def coop_per_neig(model):
+    import scipy.optimize as optimize
+    
+    active_agents = [
+        a for a in model.schedule.agents if a.rece_interaction is not None
+    ]
+    
+    if not active_agents:
+        return 0
+    
+    number_coop_actions = [
+        a.NCactions for a in active_agents if a.n_neighbors != 0
+    ]
+    number_neighbors = [
+        a.n_neighbors for a in active_agents if a.n_neighbors != 0
+    ]
+        
+    def lin(x, a, b):
+        return a*x + b
+        
+    return optimize.curve_fit(lin, number_neighbors, number_coop_actions)[0][0]
+
+
+def coop_per_neig_intc(model):
+    import scipy.optimize as optimize
+    
+    active_agents = [
+        a for a in model.schedule.agents if a.rece_interaction is not None
+    ]
+    
+    if not active_agents:
+        return 0
+    
+    number_coop_actions = [
+        a.NCactions for a in active_agents if a.n_neighbors != 0
+    ]
+    number_neighbors = [
+        a.n_neighbors for a in active_agents if a.n_neighbors != 0
+    ]
+        
+    def lin(x, a, b):
+        return a*x + b
+    
+    return optimize.curve_fit(lin, number_neighbors, number_coop_actions)[0][1]
