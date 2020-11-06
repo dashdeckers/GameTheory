@@ -3,7 +3,7 @@ from itertools import product
 # In comments: The values from the paper
 params = {
     # The map size
-    'size': 20,  # 20
+    'size': 17,  # 20
     # Initial number of agents to place at the start of a run
     'i_n_agents': 60,  # 60  (supposed to naturally grow to avg 100)
     # Initial amount of energy to give each agent at the start of a run
@@ -23,7 +23,7 @@ params = {
     # Mutation 'amplitude'
     'd': 0.2,  # 0.1
     # The minimum total_energy needed for an agent to survive
-    'death_threshold': -1,  # 0
+    'death_threshold': -3,  # 0
 
     # Whether to spawn children near parents or randomly
     # Must be in ['local' or 'global']

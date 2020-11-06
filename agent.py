@@ -14,7 +14,6 @@ class GTAgent(Agent):
         self.rece_interaction = None
         self.NCactions = 0 
         self.Nactions = 0
-        self.Ninteractions = np.zeros(4)
         self.n_neighbors = 0
 
     def move(self):
@@ -88,7 +87,6 @@ class GTAgent(Agent):
         #Reset action counters
         self.NCactions = 0 
         self.Nactions = 0
-        self.Ninteractions = np.zeros(4)
 
         # Get neighbors
         neighbors = self.model.grid.get_neighbors(
@@ -114,13 +112,12 @@ class GTAgent(Agent):
                 
             #Count the interactions
             if interaction == ('C','C'):
-                self.Ninteractions[0] += 1
+                self.NCactions += 1
             elif interaction == ('C','D'):
-                self.Ninteractions[1] += 1
-            elif interaction == ('D','C'):
-                self.Ninteractions[2] += 1
-            elif interaction == ('D','D'):
-                self.Ninteractions[3] += 1
+                self.NCactions += 1
+                
+            self.Nactions += 1
+
                 
         # Subtract the cost of surviving and update total energy
         self.delta_energy -= self.model.alpha()
@@ -131,9 +128,6 @@ class GTAgent(Agent):
             self.prev_interaction = interaction
         self.rece_interaction = interaction
         
-        #Count number of (cooperative) actions
-        self.NCactions = sum(self.Ninteractions[:2])
-        self.Nactions = sum(self.Ninteractions)
 
     def step(self):
         self.interact()

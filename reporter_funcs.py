@@ -75,20 +75,18 @@ def n_neighbor_measure(model):
 
 
 def perc_CC_interactions(model):
-    active_agents = [
-        a for a in model.schedule.agents if a.rece_interaction is not None
-    ]
-
-    if not active_agents:
-        return 0
-
-    sum_each_action = sum(
-        [a.Ninteractions for a in active_agents]
+    # Calculate the percentage of the total number of cooperative actions
+    number_coop_actions = sum(
+        [a.NCactions for a in model.schedule.agents]
+        )
+    number_tot_actions = sum(
+        [a.Nactions for a in model.schedule.agents]
         )
     
-    sum_all_actions = sum(sum_each_action)
+    if not number_tot_actions:
+        return 0
     
-    return sum_each_action[0] / sum_all_actions
+    return number_coop_actions / number_tot_actions
 
 def coop_per_neig(model):
     import scipy.optimize as optimize
