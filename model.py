@@ -28,7 +28,7 @@ class GTModel(Model):
 
         # Payoff matrix in the form (my_move, op_move) : my_reward
         self.payoff = {
-            ('C', 'C'): 2,
+            ('C', 'C'): 1,
             ('C', 'D'): -3,
             ('D', 'C'): 3,
             ('D', 'D'): -1,

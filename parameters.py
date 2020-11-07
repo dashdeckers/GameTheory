@@ -3,7 +3,7 @@ from itertools import product
 # In comments: The values from the paper
 params = {
     # The map size
-    'size': 18,  # 20
+    'size': 17,  # 20
     # Initial number of agents to place at the start of a run
     'i_n_agents': 60,  # 60  (supposed to naturally grow to avg 100)
     # Initial amount of energy to give each agent at the start of a run
@@ -19,7 +19,7 @@ params = {
     # Minimum lifespan
     'M': 100,  # ???
     # Minimum energy level to reproduce
-    'p': 2,  # ???
+    'p': 3,  # ???
     # Mutation 'amplitude'
     'd': 0.2,  # 0.1
     # The minimum total_energy needed for an agent to survive
@@ -76,11 +76,12 @@ strategy_colors = [
 ]
 
 # Batch run parameters
-run_name = 'Memory'
+run_name = 'p_sweep_memory'
 iterations = 50
 max_steps = 5000
 
 # Needs at least one item even if its a single value: [60]
 var_params = {
-    'p': [2, 4],
+    'p': [1, 2, 3, 4],
+    # 'death_threshold': [0, -1, -5],
 }
