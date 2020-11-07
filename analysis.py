@@ -62,6 +62,7 @@ def plot(params, plot_list='strategies', average=True):
                 'perc_cooperative_actions', 'n_agents',
                 'n_friendlier', 'n_aggressive', 'avg_agent_age',
                 'n_neighbors', 'avg_delta_energy',
+                'gradient_coop_neighbor', 'intercept_coop_neighbor',
             ]
         else:
             return column in plot_list
@@ -113,9 +114,10 @@ def plot(params, plot_list='strategies', average=True):
 
 
 if __name__ == '__main__':
-    # run_name = 'BIG_RUN_P'  # noqa
-    columns = ['perc_cooperative_actions']
+    run_name = 'p_sweep_memory'  # noqa
+    # perc_cooperative = ['perc_cooperative_actions']
     params = get_params(run_name)
 
-    plot(params, plot_list=columns)
+    plot(params, plot_list=['gradient_coop_neighbor'])
+    plot(params, plot_list=['intercept_coop_neighbor'])
     plot(params, plot_list='strategies')
