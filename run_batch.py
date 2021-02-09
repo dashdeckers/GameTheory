@@ -48,7 +48,7 @@ for i in range(len(data['DC'])):
 
 
 # Save data
-data_folder = Path() / run_name
+data_folder = 'Data' / Path() / run_name
 data_folder.mkdir(parents=True, exist_ok=True)
 
 data.to_csv(data_folder / 'data.csv')
